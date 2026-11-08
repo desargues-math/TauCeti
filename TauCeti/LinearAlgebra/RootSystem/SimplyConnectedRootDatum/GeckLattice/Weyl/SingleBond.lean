@@ -120,9 +120,6 @@ private theorem kostantWeyl_conj_raising_singleBond (i j : Fin t.rank)
     rw [t.weylUnit_conj_geckRepresentation_rootGenerator_of_cartanMatrix_eq_neg_one ht i j hji,
       t.weylUnit_conj_geckRepresentation_rootGenerator_of_cartanMatrix_eq_neg_one ht j i hij,
       lie_skew]
-  have hCnil : IsNilpotent (C j i) := by
-    obtain ⟨k, hk⟩ := hnil (.inl i)
-    exact ⟨k, by dsimp [C]; rw [Units.conj_pow, hk, mul_zero, zero_mul]⟩
   have hneg : ∀ n, ∀ v ∈ M,
       Associative.dividedPower n (-C j i) • v ∈ M :=
     fun n => Associative.dividedPower_neg_smul_mem _ M (hC j i n)
@@ -135,10 +132,10 @@ private theorem kostantWeyl_conj_raising_singleBond (i j : Fin t.rank)
     rw [kostantWeylPoints_toLinearMap, kostantWeylPoints_symm_toLinearMap,
       kostantWeylRestrict_eq_integralUnitRestrict]
     exact baseChange_integralUnitRestrict_conj_baseChangeExp (X j) M (N i)
-      (hN i) (hNinv i) (hX j) (hnil (.inl j)) u
+      (hN i) (hNinv i) (hX j) u
   have hexp := (hpoint i j u).trans
     ((baseChangeExp_congr hsign M (hC i j) hneg u).trans
-      ((baseChangeExp_neg (C j i) M hneg (hC j i) hCnil u).trans
+      ((baseChangeExp_neg (C j i) M hneg (hC j i) u).trans
         (hpoint j i (-u)).symm))
   -- Read the root parameters before passing to underlying endomorphisms.
   rw [kostantRootSubgroupParam_apply, kostantRootSubgroupParam_apply]
