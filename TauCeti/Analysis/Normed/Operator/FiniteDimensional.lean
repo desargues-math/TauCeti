@@ -8,6 +8,7 @@ module
 public import Mathlib.Analysis.Normed.Module.FiniteDimension
 public import Mathlib.Analysis.Normed.Operator.Banach
 public import Mathlib.LinearAlgebra.Eigenspace.Minpoly
+public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Invertible
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
 
 /-!
@@ -119,6 +120,25 @@ theorem finiteDimensional_of_isScalarTower : FiniteDimensional 𝕜' (E →L[�
   exact Module.Finite.of_restrictScalars_finite 𝕜 𝕜' (E →L[𝕜] F)
 
 end ScalarExtension
+
+section Subtype
+
+variable {𝕜 E G : Type*} [NontriviallyNormedField 𝕜] [CompleteSpace 𝕜]
+  [NormedAddCommGroup E] [NormedSpace 𝕜 E] (F : Submodule 𝕜 E) [FiniteDimensional 𝕜 F]
+  [NormedAddCommGroup G] [NormedSpace 𝕜 G] [FiniteDimensional 𝕜 G]
+
+/-- A composite `P ∘ D` restricted to a finite-dimensional subspace `F` of the same dimension as
+the finite-dimensional target is invertible once it is injective. -/
+theorem isInvertible_comp_comp_subtypeL (P : E →L[𝕜] G) (D : E →L[𝕜] E)
+    (hdimF : Module.finrank 𝕜 F = Module.finrank 𝕜 G) (hinj : ∀ z ∈ F, P (D z) = 0 → z = 0) :
+    (P ∘L D ∘L F.subtypeL).IsInvertible := by
+  have hinj' : Function.Injective ((P ∘L D ∘L F.subtypeL : F →L[𝕜] G) : F →ₗ[𝕜] G) := by
+    refine (injective_iff_map_eq_zero _).2 fun z hz ↦ Subtype.ext ?_
+    simpa using hinj z z.2 hz
+  have hsurj := (LinearMap.injective_iff_surjective_of_finrank_eq_finrank hdimF).1 hinj'
+  exact ⟨(LinearEquiv.ofBijective _ ⟨hinj', hsurj⟩).toContinuousLinearEquiv, rfl⟩
+
+end Subtype
 
 end ContinuousLinearMap
 

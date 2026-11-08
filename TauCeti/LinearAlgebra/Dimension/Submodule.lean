@@ -9,6 +9,7 @@ public import Mathlib.LinearAlgebra.Dimension.LinearMap
 public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.LinearAlgebra.Dimension.Constructions
 import TauCeti.Algebra.Module.Equiv.Basic
+import TauCeti.LinearAlgebra.Dual.Lemmas
 
 /-!
 # Dimensions of submodules
@@ -136,6 +137,37 @@ theorem isCompl_of_codisjoint_of_finrank_le {V S : Submodule 𝕜 E} [FiniteDime
   refine ⟨disjoint_def.mpr fun x hxV hxS ↦ ?_, h⟩
   have : φ ⟨x, hxS⟩ = φ 0 := by simpa [φ] using hxV
   simpa using congrArg Subtype.val (hinj this)
+
+/-- The linear-algebra core of the transverse level disc. If `T` has dimension `dim G + 1`, `T` and
+the kernel of a surjection `π` span the space, and some `v ∈ T` with `dg v ≠ 0` for a linear form
+`dg` lies in the kernel of `π`, then `π` is injective on `T ⊓ ker dg`, which has the dimension
+of `G`. -/
+theorem injOn_inf_ker_and_finrank_inf_ker_eq {G : Type*} [AddCommGroup G] [Module 𝕜 G]
+    [FiniteDimensional 𝕜 E] {T : Submodule 𝕜 E} {π : E →ₗ[𝕜] G} {dg : E →ₗ[𝕜] 𝕜} {v : E}
+    (hπs : Function.Surjective π) (hTπ : T ⊔ LinearMap.ker π = ⊤)
+    (hdim : Module.finrank 𝕜 T = Module.finrank 𝕜 G + 1) (hvs : v ∈ T) (hvπ : π v = 0)
+    (hgv : dg v ≠ 0) :
+    (∀ w ∈ T ⊓ LinearMap.ker dg, π w = 0 → w = 0) ∧
+      Module.finrank 𝕜 ↥(T ⊓ LinearMap.ker dg) = Module.finrank 𝕜 G := by
+  have hv0 : v ≠ 0 := by rintro rfl; exact hgv (map_zero _)
+  have hkerπ := LinearMap.finrank_range_add_finrank_ker π
+  rw [LinearMap.range_eq_top_of_surjective _ hπs, finrank_top] at hkerπ
+  have hdim₁ := Submodule.finrank_sup_add_finrank_inf_eq T (LinearMap.ker π)
+  rw [hTπ, finrank_top] at hdim₁
+  have hline : T ⊓ LinearMap.ker π = 𝕜 ∙ v :=
+    (Submodule.eq_of_le_of_finrank_eq
+      ((Submodule.span_singleton_le_iff_mem v _).2 (Submodule.mem_inf.2 ⟨hvs, hvπ⟩))
+      (by rw [finrank_span_singleton hv0]; omega)).symm
+  refine ⟨?_, ?_⟩
+  · rintro w ⟨hwT, hwK⟩ hw
+    have hwv : w ∈ T ⊓ LinearMap.ker π := Submodule.mem_inf.2 ⟨hwT, hw⟩
+    rw [hline] at hwv
+    obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hwv
+    have hc : c * dg v = 0 := by simpa using hwK
+    rw [(mul_eq_zero.1 hc).resolve_right hgv, zero_smul]
+  · have h := Module.Dual.finrank_ker_inf_add_one (f := dg) (U := T) fun h ↦ hgv (h hvs)
+    rw [inf_comm] at h
+    omega
 
 end DivisionRing
 
