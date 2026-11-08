@@ -143,12 +143,13 @@ the kernel of a surjection `π` span the space, and some `v ∈ T` with `dg v �
 `dg` lies in the kernel of `π`, then `π` is injective on `T ⊓ ker dg`, which has the dimension
 of `G`. -/
 theorem injOn_inf_ker_and_finrank_inf_ker_eq {G : Type*} [AddCommGroup G] [Module 𝕜 G]
-    {T : Submodule 𝕜 E} [FiniteDimensional 𝕜 T] {π : E →ₗ[𝕜] G} {dg : E →ₗ[𝕜] 𝕜} {v : E}
+    {T : Submodule 𝕜 E} {π : E →ₗ[𝕜] G} {dg : E →ₗ[𝕜] 𝕜} {v : E}
     (hπs : Function.Surjective π) (hTπ : T ⊔ LinearMap.ker π = ⊤)
     (hdim : Module.finrank 𝕜 T = Module.finrank 𝕜 G + 1) (hvs : v ∈ T) (hvπ : π v = 0)
     (hgv : dg v ≠ 0) :
     (∀ w ∈ T ⊓ LinearMap.ker dg, π w = 0 → w = 0) ∧
       Module.finrank 𝕜 ↥(T ⊓ LinearMap.ker dg) = Module.finrank 𝕜 G := by
+  have : FiniteDimensional 𝕜 T := Module.finite_of_finrank_eq_succ hdim
   have hv0 : v ≠ 0 := by rintro rfl; exact hgv (map_zero _)
   have hsurj : Function.Surjective (π.domRestrict T) := by
     intro g
