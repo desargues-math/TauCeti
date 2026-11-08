@@ -107,7 +107,7 @@ private theorem lt_norm_setIntegral_iUnion_comp {f : α → E} (hf : Integrable 
     (hN : ∀ i < k, σ i < N) (hbig : ε ≤ ‖∫ x in B (σ k), f x ∂μ‖)
     (htail : ∫ x in ⋃ m ≥ L, B m, ‖f x‖ ∂μ < ε / 3) (hL : ∀ i, k < i → L ≤ σ i) :
     ε / 3 < ‖∫ x in ⋃ j, B (σ j), f x ∂μ‖ := by
-  obtain ⟨hDeq, hd₁, hd₂⟩ := TauCeti.iUnion_comp_eq_union_of_pairwise_disjoint hB hσ k
+  obtain ⟨hDeq, hd₁, hd₂⟩ := TauCeti.iUnion_comp_eq_union_of_pairwise_disjoint hB hσ.injective k
   have hT'm : MeasurableSet (⋃ i, ⋃ (_ : k < i), B (σ i)) :=
     .iUnion fun i ↦ .iUnion fun _ ↦ hBm _
   have hHb : ‖∫ x in ⋃ i ∈ Finset.range k, B (σ i), f x ∂μ‖ < ε / 3 := by
