@@ -143,17 +143,25 @@ the kernel of a surjection `π` span the space, and some `v ∈ T` with `dg v �
 `dg` lies in the kernel of `π`, then `π` is injective on `T ⊓ ker dg`, which has the dimension
 of `G`. -/
 theorem injOn_inf_ker_and_finrank_inf_ker_eq {G : Type*} [AddCommGroup G] [Module 𝕜 G]
-    [FiniteDimensional 𝕜 E] {T : Submodule 𝕜 E} {π : E →ₗ[𝕜] G} {dg : E →ₗ[𝕜] 𝕜} {v : E}
+    {T : Submodule 𝕜 E} [FiniteDimensional 𝕜 T] {π : E →ₗ[𝕜] G} {dg : E →ₗ[𝕜] 𝕜} {v : E}
     (hπs : Function.Surjective π) (hTπ : T ⊔ LinearMap.ker π = ⊤)
     (hdim : Module.finrank 𝕜 T = Module.finrank 𝕜 G + 1) (hvs : v ∈ T) (hvπ : π v = 0)
     (hgv : dg v ≠ 0) :
     (∀ w ∈ T ⊓ LinearMap.ker dg, π w = 0 → w = 0) ∧
       Module.finrank 𝕜 ↥(T ⊓ LinearMap.ker dg) = Module.finrank 𝕜 G := by
   have hv0 : v ≠ 0 := by rintro rfl; exact hgv (map_zero _)
-  have hkerπ := LinearMap.finrank_range_add_finrank_ker π
-  rw [LinearMap.range_eq_top_of_surjective _ hπs, finrank_top] at hkerπ
-  have hdim₁ := Submodule.finrank_sup_add_finrank_inf_eq T (LinearMap.ker π)
-  rw [hTπ, finrank_top] at hdim₁
+  have hsurj : Function.Surjective (π.domRestrict T) := by
+    intro g
+    obtain ⟨x, rfl⟩ := hπs g
+    obtain ⟨t, ht, k, hk, rfl⟩ :=
+      Submodule.mem_sup.1 (hTπ ▸ Submodule.mem_top : x ∈ T ⊔ LinearMap.ker π)
+    exact ⟨⟨t, ht⟩, by simp [LinearMap.mem_ker.1 hk]⟩
+  have : FiniteDimensional 𝕜 G := Module.Finite.of_surjective _ hsurj
+  have hker : LinearMap.ker (π.domRestrict T) = (T ⊓ LinearMap.ker π).comap T.subtype := by
+    rw [LinearMap.ker_domRestrict, Submodule.comap_inf, Submodule.comap_subtype_self, top_inf_eq]
+  have hkerπ := LinearMap.finrank_range_add_finrank_ker (π.domRestrict T)
+  rw [LinearMap.range_eq_top_of_surjective _ hsurj, finrank_top, hker,
+    (Submodule.comapSubtypeEquivOfLe inf_le_left).finrank_eq] at hkerπ
   have hline : T ⊓ LinearMap.ker π = 𝕜 ∙ v :=
     (Submodule.eq_of_le_of_finrank_eq
       ((Submodule.span_singleton_le_iff_mem v _).2 (Submodule.mem_inf.2 ⟨hvs, hvπ⟩))
