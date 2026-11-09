@@ -101,13 +101,13 @@ private theorem exists_large_integral_small_unions {h : ℕ → α → E}
 integrals over unions of the sets `B m` with `m < N`, and small integral of `‖f‖` over the later
 sets, then its integral over `⋃ j, B (σ j)` is not small. -/
 private theorem lt_norm_setIntegral_iUnion_comp {f : α → E} (hf : Integrable f μ) {B : ℕ → Set α}
-    (hBm : ∀ n, MeasurableSet (B n)) (hB : Pairwise (Disjoint on B)) {σ : ℕ → ℕ}
-    (hσ : StrictMono σ) {ε : ℝ} {k N L : ℕ}
+    (hBm : ∀ n, MeasurableSet (B n)) {σ : ℕ → ℕ}
+    (hBσ : Pairwise (Disjoint on fun i ↦ B (σ i))) {ε : ℝ} {k N L : ℕ}
     (hhead : ∀ F ⊆ Finset.range N, ‖∫ x in ⋃ m ∈ F, B m, f x ∂μ‖ < ε / 3)
     (hN : ∀ i < k, σ i < N) (hbig : ε ≤ ‖∫ x in B (σ k), f x ∂μ‖)
     (htail : ∫ x in ⋃ m ≥ L, B m, ‖f x‖ ∂μ < ε / 3) (hL : ∀ i, k < i → L ≤ σ i) :
     ε / 3 < ‖∫ x in ⋃ j, B (σ j), f x ∂μ‖ := by
-  obtain ⟨hDeq, hd₁, hd₂⟩ := TauCeti.iUnion_comp_eq_union_of_pairwise_disjoint hB hσ.injective k
+  obtain ⟨hDeq, hd₁, hd₂⟩ := TauCeti.iUnion_eq_union_of_pairwise_disjoint hBσ k
   have hT'm : MeasurableSet (⋃ i, ⋃ (_ : k < i), B (σ i)) :=
     .iUnion fun i ↦ .iUnion fun _ ↦ hBm _
   have hHb : ‖∫ x in ⋃ i ∈ Finset.range k, B (σ i), f x ∂μ‖ < ε / 3 := by
@@ -159,7 +159,8 @@ theorem tendsto_setIntegral_of_pairwise_disjoint {h : ℕ → α → E} (hh : �
     exact (le_max_right _ _).trans (hg_ge _ _)
   -- Along the chosen indices, the integrals over `⋃ j, B (σ j)` stay away from zero.
   have hbound (j : ℕ) : ε / 3 < ‖∫ x in ⋃ i, B (σ i), h (σ (j + 1)) x ∂μ‖ := by
-    refine lt_norm_setIntegral_iUnion_comp (hh _) hBm hB hσ (k := j + 1) (N := σ j + 1)
+    refine lt_norm_setIntegral_iUnion_comp (hh _) hBm (hB.comp_of_injective hσ.injective)
+      (k := j + 1) (N := σ j + 1)
       (L := M (σ (j + 1))) ?_ (fun i hi ↦ Nat.lt_succ_of_le (hσ.monotone (by omega))) ?_ (hM _)
       fun i hi ↦ (hσM (j + 1)).trans (hσ.monotone hi)
     · rw [hσ_succ]

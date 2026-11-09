@@ -28,8 +28,8 @@ splits into the earlier sets, the `k`-th set and the later sets, and these piece
   sequence of sets lies outside `K (k + 1)` for some `k`.
 * `TauCeti.exists_map_eq_of_notMem`: a map taking the eventual value of maps which stabilize outside
   a decreasing sequence of sets, with a prescribed value on the intersection.
-* `TauCeti.iUnion_comp_eq_union_of_pairwise_disjoint`: the decomposition of `⋃ j, B (σ j)` and
-  the disjointness of its three pieces.
+* `TauCeti.iUnion_eq_union_of_pairwise_disjoint`: the decomposition of `⋃ j, C j` for pairwise
+  disjoint `C` and the disjointness of its three pieces.
 -/
 
 public section
@@ -72,15 +72,13 @@ theorem exists_map_eq_of_notMem {α β : Type*} {K : ℕ → Set α} (hKsucc : �
   · exact (hGstab _ k hjk x hj).symm
   · exact hGstab k _ hkj x hx
 
-/-- For an injective `σ` and pairwise disjoint sets `B`, the union `⋃ j, B (σ j)` splits
-into the earlier sets, the `k`-th set and the later sets, and these three pieces are disjoint. -/
-theorem iUnion_comp_eq_union_of_pairwise_disjoint {α : Type*} {B : ℕ → Set α}
-    (hB : Pairwise (Disjoint on B)) {σ : ℕ → ℕ} (hσ : Function.Injective σ) (k : ℕ) :
-    ⋃ j, B (σ j) = (⋃ i ∈ Finset.range k, B (σ i)) ∪ (B (σ k) ∪ ⋃ i, ⋃ (_ : k < i), B (σ i)) ∧
-    Disjoint (⋃ i ∈ Finset.range k, B (σ i)) (B (σ k) ∪ ⋃ i, ⋃ (_ : k < i), B (σ i)) ∧
-    Disjoint (B (σ k)) (⋃ i, ⋃ (_ : k < i), B (σ i)) := by
-  have hdisj (i i' : ℕ) (hii' : i ≠ i') : Disjoint (B (σ i)) (B (σ i')) :=
-    hB (hσ.ne hii')
+/-- For pairwise disjoint sets `C`, the union `⋃ j, C j` splits into the earlier sets, the `k`-th
+set and the later sets, and these three pieces are disjoint. -/
+theorem iUnion_eq_union_of_pairwise_disjoint {α : Type*} {C : ℕ → Set α}
+    (hC : Pairwise (Disjoint on C)) (k : ℕ) :
+    ⋃ j, C j = (⋃ i ∈ Finset.range k, C i) ∪ (C k ∪ ⋃ i, ⋃ (_ : k < i), C i) ∧
+    Disjoint (⋃ i ∈ Finset.range k, C i) (C k ∪ ⋃ i, ⋃ (_ : k < i), C i) ∧
+    Disjoint (C k) (⋃ i, ⋃ (_ : k < i), C i) := by
   refine ⟨?_, ?_, ?_⟩
   · ext x
     simp only [mem_union, mem_iUnion, Finset.mem_range, exists_prop]
@@ -94,8 +92,8 @@ theorem iUnion_comp_eq_union_of_pairwise_disjoint {α : Type*} {B : ℕ → Set 
       exacts [⟨i, hi⟩, ⟨k, hi⟩, ⟨i, hi⟩]
   · simp only [disjoint_union_right, disjoint_iUnion_left, disjoint_iUnion_right,
       Finset.mem_range]
-    exact ⟨fun i hi ↦ hdisj i k hi.ne, fun i hi i' hi' ↦ hdisj i' i (by omega)⟩
+    exact ⟨fun i hi ↦ hC (hi.ne), fun i hi i' hi' ↦ hC (by omega : i' ≠ i)⟩
   · simp only [disjoint_iUnion_right]
-    exact fun i hi ↦ hdisj k i hi.ne
+    exact fun i hi ↦ hC hi.ne
 
 end TauCeti
