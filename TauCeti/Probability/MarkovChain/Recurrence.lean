@@ -100,8 +100,8 @@ theorem IsTransient.meanReturnTime_eq_top (hx : κ.IsTransient x) : κ.meanRetur
   have hT : Measurable (hittingAfter (fun n (ω : ℕ → S) => ω n) {x} 1) :=
     (Filtration.adapted_piLE.isStoppingTime_hittingAfter
       (f := Filtration.piLE (X := fun _ : ℕ => S)) (measurableSet_singleton x)).measurable'
-  have hE : MeasurableSet {ω : ℕ → S | hittingAfter (fun n ω => ω n) {x} 1 ω ≠ ⊤} :=
-    (measurableSet_singleton ⊤).preimage hT |>.compl
+  have hE := TauCeti.Probability.measurableSet_hittingAfter_coord_ne_top
+    (measurableSet_singleton x) 1
   refine lintegral_eq_top_of_measure_eq_top_ne_zero
     (Measurable.of_discrete.comp hT).aemeasurable ?_
   -- The integrand takes the value `∞` exactly where the first return is missing.
@@ -160,10 +160,8 @@ theorem IsRecurrent.ae_hittingAfter_ne_top_of_reaches (hx : κ.IsRecurrent x)
     ∀ᵐ ω ∂markovChainLaw (Measure.dirac y) κ,
       hittingAfter (fun n ω => ω n) {x} 0 ω ≠ ⊤ := by
   obtain ⟨n, hn⟩ := (reaches_def x y).mp hxy
-  have hE : MeasurableSet {ω : ℕ → S | hittingAfter (fun n ω => ω n) {x} 0 ω ≠ ⊤} :=
-    ((measurableSet_singleton ⊤).preimage
-      (Filtration.adapted_piLE.isStoppingTime_hittingAfter
-        (f := Filtration.piLE (X := fun _ : ℕ => S)) (measurableSet_singleton x)).measurable').compl
+  have hE := TauCeti.Probability.measurableSet_hittingAfter_coord_ne_top
+    (measurableSet_singleton x) 0
   -- Infinitely many visits imply a visit after time `n`. Disintegrating the future law then
   -- gives almost-sure entrance from `y`, since `y` has positive mass at time `n`.
   have hshift : ∀ᵐ ω ∂(markovChainLaw (Measure.dirac x) κ).map (shift S)^[n],
