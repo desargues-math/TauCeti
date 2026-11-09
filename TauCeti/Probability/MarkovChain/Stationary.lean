@@ -36,7 +36,8 @@ namespace ProbabilityTheory.Kernel
 variable {α : Type*} [MeasurableSpace α] {κ : Kernel α α} [IsMarkovKernel κ]
   {ν : Measure α} [IsFiniteMeasure ν]
 
-/-- Starting a homogeneous chain from an invariant finite measure makes the one-sided
+omit [IsFiniteMeasure ν] in
+/-- Starting a homogeneous chain from an invariant measure makes the one-sided
 path shift measure preserving. -/
 theorem Invariant.measurePreserving_shift_markovChainLaw (hν : κ.Invariant ν) :
     MeasurePreserving (shift α) (markovChainLaw ν κ) (markovChainLaw ν κ) := by
@@ -70,7 +71,8 @@ variable {α Ω : Type*} [MeasurableSpace α] [MeasurableSpace Ω]
   {κ : Kernel α α} [IsMarkovKernel κ] {ν : Measure α} [IsFiniteMeasure ν]
   {P : Measure Ω} {X : ℕ → Ω → α}
 
-/-- Every time shift of an arbitrary realization of a chain started from an invariant finite
+omit [IsFiniteMeasure ν] in
+/-- Every time shift of an arbitrary realization of a chain started from an invariant
 measure has the original full path law. -/
 theorem processShift_markovChainLaw
     (hX : HasLaw (fun ω n => X n ω) (markovChainLaw ν κ) P)
