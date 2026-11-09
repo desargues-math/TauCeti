@@ -673,11 +673,12 @@ theorem trace_sub_sum_mem_filtration (hF' : IsFunctionField k F') (hP : P.degree
       (PowerSeries.coeff i (P'.powerSeriesExpansionResidueField ht' z))) * t ^ (i : ℕ) ∈
         P.filtration m := by
   -- Outline: in the local model `S = 𝒪'_P`, modulo `I = (t ^ m)`, apply
-  -- `Algebra.trace_sub_sum_mem_of_forall_mul_sub_sum_mem` with `w = W ≡ 1` at `P'`, the basis
-  -- `b j` of lifts of a `k`-basis `β j` of `F'_{P'}` with constant expansions, and the matrix
-  -- `a j l = ∑ᵢ [cᵢ]ⱼₗ tⁱ` of multiplication by the expansion coefficients `cᵢ` of `z`. Each of
-  -- its five hypotheses is a membership in `I S`, checked at `P'` on truncated expansions
-  -- and at the other places over `P` by smallness.
+  -- `Algebra.trace_sub_sum_mem_of_forall_mul_sub_sum_mem` with the basis `b j` of lifts of a
+  -- `k`-basis `β j` of `F'_{P'}` with constant expansions, and the matrix `a j l = ∑ᵢ [cᵢ]ⱼₗ tⁱ`
+  -- of multiplication by the expansion coefficients `cᵢ` of `z`. That `z` maps into the span of
+  -- the `b j` follows from `z ≡ z W` and the same for `W ≡ 1` at `P'`. Each such congruence is a
+  -- membership in `I S`, checked at `P'` on truncated expansions and at the other places over `P`
+  -- by smallness.
   classical
   subst hPP'
   have he : ramificationIdx F P' = 1 := by
@@ -699,11 +700,24 @@ theorem trace_sub_sum_mem_filtration (hF' : IsFunctionField k F') (hP : P.degree
     ⟨z, mem_integralClosure_of_forall_mem_filtration k F P' hF' z.2 hzQ⟩
   obtain ⟨a, hzb, hdiag⟩ := exists_mul_sub_sum_mem_map_span_pow P' rfl hF' he m (x := xR) ht hfilt β
     hbt hΦb hbS (z := zS) hzQ
-  have key := Algebra.trace_sub_sum_mem_of_forall_mul_sub_sum_mem
-    (fun j ↦ mul_sub_self_mem_map_span_pow k F P' hF' he ht m hW1 hWS (hbS j))
-    (exists_sub_sum_mem_map_span_pow P' rfl hF' he m ht hfilt β hΦb hbS hW1 hWS)
-    (mem_span_pow_of_sum_mem_map_span_pow P' rfl ht hF' hP he m rfl hfilt β hΦb)
-    (by rw [mul_comm]; exact mul_sub_self_mem_map_span_pow k F P' hF' he ht m hW1 hWS hzQ) hzb
+  have hz : zS * W - zS ∈ (Ideal.span {xR ^ m}).map (algebraMap _ _) := by
+    rw [mul_comm]
+    exact mul_sub_self_mem_map_span_pow k F P' hF' he ht m hW1 hWS hzQ
+  -- Since `z ≡ z W`, the class of `z` maps into the span of the `b j`, as `W` does.
+  have hspanz (s : integralClosure (P'.restrict k F).integers F') :
+      ∃ cs : Fin (Module.finrank k P'.ResidueField) → (P'.restrict k F).integers,
+        zS * s - ∑ l, algebraMap _ _ (cs l) * b l ∈ (Ideal.span {xR ^ m}).map (algebraMap _ _) := by
+    obtain ⟨cs, hcs⟩ := exists_sub_sum_mem_map_span_pow P' rfl hF' he m ht hfilt β hΦb hbS hW1 hWS s
+    refine ⟨fun l ↦ ∑ j, cs j * a j l, ?_⟩
+    convert add_mem (add_mem (Ideal.mul_mem_right s _ (neg_mem hz)) (Ideal.mul_mem_left _ zS hcs))
+      (sum_mem fun j (_ : j ∈ Finset.univ) ↦
+        Ideal.mul_mem_left _ (algebraMap _ _ (cs j)) (hzb j)) using 1
+    simp only [map_sum, map_mul, Finset.sum_mul, Finset.mul_sum, mul_sub, Finset.sum_sub_distrib,
+      mul_assoc, mul_left_comm zS]
+    rw [Finset.sum_comm]
+    ring
+  have key := Algebra.trace_sub_sum_mem_of_forall_mul_sub_sum_mem hspanz
+    (mem_span_pow_of_sum_mem_map_span_pow P' rfl ht hF' hP he m rfl hfilt β hΦb) hzb
   rw [hdiag, hΦ zS z.2] at key
   exact trace_sub_sum_mem_filtration_of_mem_span ht m (x := xR) rfl zS _ key
 
