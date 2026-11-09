@@ -35,10 +35,6 @@ continuous curve of finite measures when `u` is bounded continuous and uniformly
 * `MeasureTheory.FiniteMeasure.tendsto_integral_of_tendstoUniformlyOn_closedBall`: the same for
   measures carried by a closed ball of a proper normed space, against `RCLike`-valued integrands
   that are only continuous, and converge uniformly, on the ball.
-* `MeasureTheory.tendsto_integral_of_tendsto_measureReal_univ`: integrals of eventually bounded
-  functions against measures carried by a set, with total mass tending to zero, tend to zero.
-* `MeasureTheory.tendsto_integral_of_tendsto_measureReal_univ_of_tendstoUniformlyOn`: the same for
-  functions converging uniformly on the ball to a function continuous on it.
 
 ## Implementation
 
@@ -213,37 +209,6 @@ theorem FiniteMeasure.tendsto_integral_of_tendstoUniformlyOn_closedBall {E 𝕜 
     (Eventually.of_forall fun i ↦ ((hfs i).comp_continuous hρ hmem).aestronglyMeasurable)
   rw [← hρeq hμr f]
   exact (tendsto_congr' (hμsr.mono fun i hi ↦ hρeq hi (fs i))).1 hlim
-
-/-- Integrals against measures `ν i` carried by a set `s`, whose masses tend to zero, of functions
-eventually bounded on `s` by a common constant tend to zero. -/
-theorem tendsto_integral_of_tendsto_measureReal_univ {α G ι : Type*} [MeasurableSpace α]
-    [NormedAddCommGroup G] [NormedSpace ℝ G] {L : Filter ι} {s : Set α} {ν : ι → Measure α}
-    [∀ i, IsFiniteMeasure (ν i)] (hνs : ∀ i, ν i sᶜ = 0)
-    (hν : Tendsto (fun i => (ν i).real univ) L (𝓝 0)) {f : ι → α → G} {C : ℝ}
-    (hf : ∀ᶠ i in L, ∀ w ∈ s, ‖f i w‖ ≤ C) :
-    Tendsto (fun i => ∫ w, f i w ∂ν i) L (𝓝 0) := by
-  refine squeeze_zero_norm' ?_ (by simpa using hν.const_mul C)
-  filter_upwards [hf] with i hi
-  have hνae : ∀ᵐ w ∂ν i, w ∈ s := mem_ae_iff.2 (hνs i)
-  exact norm_integral_le_of_norm_le_const (hνae.mono hi)
-
-/-- Integrals of functions converging uniformly on the closed ball `Metric.closedBall 0 R` against
-measures carried by that ball with total mass tending to zero tend to zero. -/
-theorem tendsto_integral_of_tendsto_measureReal_univ_of_tendstoUniformlyOn {E G ι : Type*}
-    [NormedAddCommGroup E] [ProperSpace E] [MeasurableSpace E]
-    [NormedAddCommGroup G] [NormedSpace ℝ G] {L : Filter ι} {R : ℝ}
-    {ν : ι → Measure E} [∀ i, IsFiniteMeasure (ν i)]
-    (hνR : ∀ i, ν i (Metric.closedBall 0 R)ᶜ = 0) (hν : Tendsto (fun i => (ν i).real univ) L (𝓝 0))
-    {f : ι → E → G} {g : E → G} (hg : ContinuousOn g (Metric.closedBall 0 R))
-    (hfg : TendstoUniformlyOn f g L (Metric.closedBall 0 R)) :
-    Tendsto (fun i => ∫ w, f i w ∂ν i) L (𝓝 0) := by
-  obtain ⟨Cg, hCg⟩ := (isCompact_closedBall (0 : E) R).exists_bound_of_continuousOn hg
-  refine tendsto_integral_of_tendsto_measureReal_univ (s := Metric.closedBall 0 R) hνR hν
-    (C := Cg + 1) ?_
-  filter_upwards [Metric.tendstoUniformlyOn_iff.1 hfg 1 one_pos] with i hi w hw
-  have h1 := hi w hw
-  rw [dist_comm, dist_eq_norm] at h1
-  linarith [norm_le_norm_add_norm_sub' (f i w) (g w), hCg w hw]
 
 end NarrowConvergence
 

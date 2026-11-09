@@ -265,7 +265,7 @@ private theorem tendsto_integral_sub_sum_roots_of_tendsto_finiteMeasure {𝕜 : 
   -- The limits `ρ` and `ρ'` have the same moments of order at most `m`, namely `M₀`.
   have hρmom (k : ℕ) : ∫ w, w ^ k ∂(ρ : Measure ℂ) = M₀ k := by
     have hνk : Tendsto (fun i => ∫ w, w ^ k ∂ν i) U (𝓝 0) :=
-      tendsto_integral_of_tendsto_measureReal_univ hνR hν
+      MeasureTheory.tendsto_integral_of_tendsto_measureReal_univ hνR hν
         (.of_forall fun _ _ hw => norm_pow_le_of_mem_closedBall hw k)
     refine tendsto_nhds_unique (FiniteMeasure.tendsto_integral_of_tendstoUniformlyOn_closedBall hρ
       (.of_forall hμB) hρB (fun _ => (continuous_pow k).continuousOn)
@@ -301,8 +301,8 @@ private theorem tendsto_integral_sub_sum_roots_of_tendsto_finiteMeasure {𝕜 : 
   have hT₁ : Tendsto (fun i => ∫ w, f i w ∂μ i) U (𝓝 (∫ w, g w ∂(ρ : Measure ℂ))) :=
     FiniteMeasure.tendsto_integral_of_tendstoUniformlyOn_closedBall hρ (.of_forall hμB) hρB
       (fun i => (hf i).continuousOn) hg.continuousOn (hfg B)
-  have hT₂ := tendsto_integral_of_tendsto_measureReal_univ_of_tendstoUniformlyOn hνR hν
-    hg.continuousOn (hfg R)
+  have hT₂ := MeasureTheory.tendsto_integral_of_tendsto_measureReal_univ_of_tendstoUniformlyOn
+    (isCompact_closedBall 0 R) hνR hν hg.continuousOn (hfg R)
   have hT₃ : Tendsto (fun i => ((P i).roots.map (f i)).sum) U
       (𝓝 (∫ w, g w ∂(ρ' : Measure ℂ))) :=
     (FiniteMeasure.tendsto_integral_of_tendstoUniformlyOn_closedBall hρ' hτB hρ'B

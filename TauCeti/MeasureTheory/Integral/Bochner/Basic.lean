@@ -102,6 +102,15 @@ The conversion is `MeasureTheory.ofReal_integral_norm_eq_lintegral_enorm`, whose
   convergence of integrals against an almost everywhere bounded scalar multiplier vanishing
   almost everywhere outside `s`.
 
+## Integrals against measures of small mass
+
+* `tendsto_integral_of_tendsto_measureReal_univ`: integrals of functions eventually bounded by a
+  common constant on a set `s` against finite measures carried by `s`, with total mass tending
+  to zero, tend to zero.
+* `tendsto_integral_of_tendsto_measureReal_univ_of_tendstoUniformlyOn`: the same for functions
+  converging uniformly on a compact set `K` to a function continuous on `K`, against measures
+  carried by `K`.
+
 ## Tail lower bounds
 
 A function on the real line whose norm stays above a positive constant on a set of infinite
@@ -489,6 +498,35 @@ theorem tendsto_eLpNorm_one_of_tendsto_integral_norm_sub {Ω E ι : Type*} [Meas
     ← ofReal_integral_norm_eq_lintegral_enorm hi]
   simp only [Function.comp_apply, Pi.sub_apply]
 
+/-- Integrals against measures `ν i` carried by a set `s`, whose masses tend to zero, of functions
+eventually bounded on `s` by a common constant tend to zero. -/
+theorem tendsto_integral_of_tendsto_measureReal_univ {α G ι : Type*} [MeasurableSpace α]
+    [NormedAddCommGroup G] [NormedSpace ℝ G] {L : Filter ι} {s : Set α} {ν : ι → Measure α}
+    [∀ i, IsFiniteMeasure (ν i)] (hνs : ∀ i, ν i sᶜ = 0)
+    (hν : Tendsto (fun i => (ν i).real Set.univ) L (𝓝 0)) {f : ι → α → G} {C : ℝ}
+    (hf : ∀ᶠ i in L, ∀ w ∈ s, ‖f i w‖ ≤ C) :
+    Tendsto (fun i => ∫ w, f i w ∂ν i) L (𝓝 0) := by
+  refine squeeze_zero_norm' ?_ (by simpa using hν.const_mul C)
+  filter_upwards [hf] with i hi
+  have hνae : ∀ᵐ w ∂ν i, w ∈ s := mem_ae_iff.2 (hνs i)
+  exact norm_integral_le_of_norm_le_const (hνae.mono hi)
+
+/-- Integrals of functions converging uniformly on a compact set `K` to a function continuous on
+`K`, against measures carried by `K` with total mass tending to zero, tend to zero. -/
+theorem tendsto_integral_of_tendsto_measureReal_univ_of_tendstoUniformlyOn {E G ι : Type*}
+    [TopologicalSpace E] [MeasurableSpace E] [NormedAddCommGroup G] [NormedSpace ℝ G]
+    {L : Filter ι} {K : Set E} (hK : IsCompact K)
+    {ν : ι → Measure E} [∀ i, IsFiniteMeasure (ν i)]
+    (hνK : ∀ i, ν i Kᶜ = 0) (hν : Tendsto (fun i => (ν i).real Set.univ) L (𝓝 0))
+    {f : ι → E → G} {g : E → G} (hg : ContinuousOn g K) (hfg : TendstoUniformlyOn f g L K) :
+    Tendsto (fun i => ∫ w, f i w ∂ν i) L (𝓝 0) := by
+  obtain ⟨Cg, hCg⟩ := hK.exists_bound_of_continuousOn hg
+  refine tendsto_integral_of_tendsto_measureReal_univ (s := K) hνK hν (C := Cg + 1) ?_
+  filter_upwards [Metric.tendstoUniformlyOn_iff.1 hfg 1 one_pos] with i hi w hw
+  have h1 := hi w hw
+  rw [dist_comm, dist_eq_norm] at h1
+  linarith [norm_le_norm_add_norm_sub' (f i w) (g w), hCg w hw]
+
 /-- If `a i → b` in `L¹(s)`, then the integrals `∫ x, c x • a i x ∂μ` converge to
 `∫ x, c x • b x ∂μ` for an almost everywhere bounded scalar multiplier `c` vanishing
 almost everywhere outside `s`.
@@ -612,6 +650,16 @@ theorem measure_compl_roots_eq_zero_of_integral_norm_eval_sq_eq_zero {𝕜 : Typ
   have hw' : p.eval w ≠ 0 := fun h0 ↦ hw (by simp [mem_roots hp, h0])
   simpa using hw'
 
+open Polynomial in
+/-- The root counting measure of a polynomial `p` gives integral zero to `|p|²`. -/
+theorem integral_norm_eval_sq_sum_roots_eq_zero {𝕜 : Type*} [NormedField 𝕜] [MeasurableSpace 𝕜]
+    [MeasurableSingletonClass 𝕜] (p : 𝕜[X]) :
+    ∫ w, ‖p.eval w‖ ^ 2 ∂(p.roots.map Measure.dirac).sum = 0 := by
+  rw [Multiset.integral_sum_map_dirac]
+  refine Multiset.sum_eq_zero fun x hx ↦ ?_
+  obtain ⟨r, hr, rfl⟩ := Multiset.mem_map.1 hx
+  simp [(mem_roots'.1 hr).2.eq_zero]
+
 /-- **Chebyshev's inequality for truncations.** For `k < l`, the level set `{l < g}` in a
 measurable set `s` has measure at most `∫_s ((g - k)⁺)² / (l - k)²`, when `((g - k)⁺)²` is
 integrable on `s`. -/
@@ -669,16 +717,6 @@ theorem setIntegral_rpow_le_rpow_mul_setIntegral_rpow {X : Type*} [MeasurableSpa
         exact mul_le_mul_of_nonneg_left (setIntegral_mono_set hintp
           (hw0.mono fun x hx => Real.rpow_nonneg hx p) hst.eventuallyLE)
           (Real.rpow_nonneg hF _)
-
-open Polynomial in
-/-- The root counting measure of a polynomial `p` gives integral zero to `|p|²`. -/
-theorem integral_norm_eval_sq_sum_roots_eq_zero {𝕜 : Type*} [NormedField 𝕜] [MeasurableSpace 𝕜]
-    [MeasurableSingletonClass 𝕜] (p : 𝕜[X]) :
-    ∫ w, ‖p.eval w‖ ^ 2 ∂(p.roots.map Measure.dirac).sum = 0 := by
-  rw [Multiset.integral_sum_map_dirac]
-  refine Multiset.sum_eq_zero fun x hx ↦ ?_
-  obtain ⟨r, hr, rfl⟩ := Multiset.mem_map.1 hx
-  simp [(mem_roots'.1 hr).2.eq_zero]
 
 /-- A mean zero random variable with values in `[a, b]` has `a ≤ 0 ≤ b`. -/
 theorem nonpos_nonneg_of_mem_Icc_of_integral_eq_zero {Ω : Type*} [mΩ : MeasurableSpace Ω]
