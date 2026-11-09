@@ -10,7 +10,6 @@ public import TauCeti.FieldTheory.FunctionField.AffineModel.Extension
 
 -- Proof-only: the scalar tower `k → 𝒪_P → 𝒪_{P'}` of valuation rings.
 import TauCeti.FieldTheory.FunctionField.Place.Extension.Degree
-public import TauCeti.FieldTheory.FunctionField.Place.Extension.Existence
 
 /-!
 # The different exponent of a place
