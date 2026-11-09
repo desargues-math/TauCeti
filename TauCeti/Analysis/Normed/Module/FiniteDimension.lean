@@ -40,6 +40,8 @@ that depend continuously on the parameter in the operator norm.
   dimension as the space.
 * `ContinuousLinearMap.surjective_compL_flip_of_injective`: precomposition with an injective map
   into a finite-dimensional space is surjective on continuous duals.
+* `TauCeti.finiteDimensional_of_finite_sphere`: a real normed space with a finite unit sphere is
+  finite-dimensional.
 * `TauCeti.nonempty_continuousLinearEquiv_of_prod_continuousLinearEquiv`: complements of
   the same space in a finite-dimensional space are isomorphic.
 * `TauCeti.continuous_det_div_conj`: the determinant phase `det A / conj (det A)` of a continuous
@@ -117,6 +119,20 @@ theorem eq_or_eq_neg_of_norm_eq_of_finrank_eq_one
     simpa [norm_smul, Real.norm_eq_abs, norm_ne_zero_iff.mpr hy] using hn
   rcases (abs_eq (by positivity : (0 : ℝ) ≤ 1)).mp hc with hc | hc <;>
     simp [hc]
+
+/-- A real normed space whose unit sphere is finite is finite-dimensional: the sphere spans the
+space, since every nonzero vector is a multiple of a unit vector. -/
+theorem finiteDimensional_of_finite_sphere {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
+    (h : Finite (Metric.sphere (0 : V) 1)) : FiniteDimensional ℝ V := by
+  have hspan : Submodule.span ℝ (Metric.sphere (0 : V) 1) = ⊤ := by
+    refine eq_top_iff.2 fun x _ ↦ ?_
+    by_cases hx : x = 0
+    · simp [hx]
+    have hx' : x = ‖x‖ • (‖x‖⁻¹ • x) := by
+      rw [smul_smul, mul_inv_cancel₀ (norm_ne_zero_iff.2 hx), one_smul]
+    rw [hx']
+    exact Submodule.smul_mem _ _ (Submodule.subset_span (by simp [norm_smul, hx]))
+  exact Module.finite_def.2 (hspan ▸ Submodule.fg_span (Set.toFinite _))
 
 section Star
 
