@@ -99,7 +99,7 @@ theorem nodePolynomial_eq_of_isSingular_zero (W : WeierstrassCurve A)
   simpa using W.nodePolynomial_eq_C_mul hn
 
 /-- The discriminant of the node polynomial is `-c₄ c₆`. Hence — away from residue characteristic
-two, and provided `c₄` survives the reduction — the tangent directions at the node are rational
+two — the tangent directions at the node are rational
 over the residue field exactly when the image of `-c₄ c₆` is a square there
 (`splits_nodePolynomial_map_iff_isSquare`); twisting by `(t, n)` multiplies `-c₄ c₆` by
 `(t² - 4n)⁵ = (t² - 4n)⁴ · (t² - 4n)`, i.e. by the twisting parameter up to a square. -/
@@ -198,17 +198,15 @@ lemma splits_variableChange_nodePolynomial_map_iff (φ : A →+* k) (W : Weierst
   exact (Polynomial.splits_iff_comp_splits_of_natDegree_eq_one
     (Polynomial.natDegree_linear hu)).symm
 
-/-- **Split criterion away from residue characteristic two.** Over a field `k` with `2 ≠ 0`, and
-provided `c₄` does not die under `φ` — the condition that makes the reduced polynomial genuinely
-quadratic, and which multiplicative reduction supplies — the node polynomial splits, i.e. the two
-tangent directions at the node are `k`-rational, exactly when `φ (-(c₄ * c₆))`, the image of its
-discriminant (`discrim_nodePolynomial`), is a square in `k`. Applied to a quadratic twist via
-`-c₄' c₆' = (t² - 4n)⁵ · (-c₄ c₆)`, this criterion identifies the square class of twists that
-turns nonsplit reduction into split reduction. -/
-lemma splits_nodePolynomial_map_iff_isSquare [NeZero (2 : k)] (φ : A →+* k) (W : WeierstrassCurve A)
-    (hc₄ : φ W.c₄ ≠ 0) :
+/-- **Split criterion away from residue characteristic two.** Over a field `k` with `2 ≠ 0`, the
+node polynomial splits, i.e. the two tangent directions at the node are `k`-rational, exactly when
+`φ (-(c₄ * c₆))`, the image of its discriminant (`discrim_nodePolynomial`), is a square in `k`.
+Applied to a quadratic twist via `-c₄' c₆' = (t² - 4n)⁵ · (-c₄ c₆)`, this criterion identifies the
+square class of twists that turns nonsplit reduction into split reduction. -/
+lemma splits_nodePolynomial_map_iff_isSquare [NeZero (2 : k)] (φ : A →+* k)
+    (W : WeierstrassCurve A) :
     (W.nodePolynomial.map φ).Splits ↔ IsSquare (φ (-(W.c₄ * W.c₆))) := by
-  rw [nodePolynomial_map_eq_quadratic, Polynomial.splits_quadratic_iff_isSquare hc₄,
+  rw [nodePolynomial_map_eq_quadratic, Polynomial.splits_quadratic_iff_isSquare,
     discrim_map_nodePolynomial]
 
 /-- **Split criterion in residue characteristic two.** Over a field `k` of characteristic `2`,
@@ -229,7 +227,7 @@ lemma splits_nodePolynomial_map_iff_exists_artinSchreier_of_two_eq_zero (h2 : (2
     rw [map_mul]
     exact mul_ne_zero ha₁ hc₄
   rw [nodePolynomial_map_eq_quadratic,
-    Polynomial.splits_quadratic_iff_exists_artinSchreier_of_two_eq_zero h2 hc₄ hb]
+    Polynomial.splits_quadratic_iff_exists_artinSchreier_of_two_eq_zero h2 hb]
 
 end WeierstrassCurve
 
