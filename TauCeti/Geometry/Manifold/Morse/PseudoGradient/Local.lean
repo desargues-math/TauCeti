@@ -385,10 +385,10 @@ the Morse chart `φ`. On a small coordinate cube around `x`, a point lies in the
 theorem exists_forall_mem_stableSet_iff (hX : IsAdaptedPseudoGradient f X)
     (φ : MorseChart E f x)
     (hφ : ∀ y ∈ φ.toChart.source, φ.coord (mfderiv 𝓘(ℝ, E) 𝓘(ℝ, E) φ.toChart y (X y)) =
-      fun i ↦ -(φ.weight i * φ.coord (φ.toChart y) i))
-    (hf : MDifferentiable 𝓘(ℝ, E) 𝓘(ℝ) f) :
+      fun i ↦ -(φ.weight i * φ.coord (φ.toChart y) i)) :
     ∃ ε > 0, ∀ y ∈ φ.toChart.source, ‖φ.coord (φ.toChart y)‖ < ε →
       (y ∈ hX.flow.stableSet x ↔ ∀ i, φ.weight i < 0 → φ.coord (φ.toChart y) i = 0) := by
+  have hf := hX.mdifferentiable
   obtain ⟨r, hr, hrT⟩ := φ.exists_pos_forall_norm_lt_mem_target
   have hn : (0 : ℝ) ≤ Module.finrank ℝ E := Nat.cast_nonneg _
   refine ⟨r / (4 * (Module.finrank ℝ E + 1)), by positivity, fun y hy hyε ↦ ⟨fun hs ↦ ?_, fun hu ↦
@@ -398,7 +398,7 @@ theorem exists_forall_mem_stableSet_iff (hX : IsAdaptedPseudoGradient f X)
     obtain ⟨j, hj, hjz⟩ := hne
     obtain ⟨T, hT⟩ := hX.exists_flow_lt_of_coord_ne_zero φ hφ hrT hy hyε hj hjz
     exact hT.not_ge (Flow.le_of_mem_stableSet_of_antitone (Flow.isInvariant_stableSet _ _ T hs)
-      hf.continuous.continuousAt (hX.antitone_flow hf _))
+      hf.continuous.continuousAt (hX.antitone_flow _))
   · gcongr
     linarith
 
@@ -413,7 +413,7 @@ theorem exists_forall_coord_flow_eq_exp_smul (hX : IsAdaptedPseudoGradient f X)
     ∃ ρ > 0, ∀ y ∈ hX.flow.stableSet x, y ∈ φ.toChart.source → ‖φ.coord (φ.toChart y)‖ < ρ →
       ∀ t, 0 ≤ t → hX.flow t y ∈ φ.toChart.source ∧
         φ.coord (φ.toChart (hX.flow t y)) = Real.exp (-t) • φ.coord (φ.toChart y) := by
-  obtain ⟨ε, hε, hεs⟩ := hX.exists_forall_mem_stableSet_iff φ hφ hX.mdifferentiable
+  obtain ⟨ε, hε, hεs⟩ := hX.exists_forall_mem_stableSet_iff φ hφ
   obtain ⟨r, hr, hrT⟩ := φ.exists_pos_forall_norm_lt_mem_target
   refine ⟨min ε (r / 2), by positivity, fun y hys hy hyρ t ht ↦ ?_⟩
   set z := φ.coord (φ.toChart y)
