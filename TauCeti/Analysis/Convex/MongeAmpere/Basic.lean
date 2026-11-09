@@ -366,9 +366,18 @@ let `U ⊆ Ω` be open and convex. The Monge–Ampère measure of `u` restricted
 off `U`) is the restriction to `U` of the Monge–Ampère measure of `u` on `Ω`: a subgradient of `u`
 relative to the neighbourhood `U` of a point is a subgradient relative to `Ω`. -/
 theorem mongeAmpereMeasure_ite_eq_restrict {U : Set E} [DecidablePred (· ∈ U)] (hΩ : IsOpen Ω)
-    (hU : IsOpen U) (hUc : Convex ℝ U) (hUΩ : U ⊆ Ω) (hu : ConvexOn ℝ Ω u) (hμ : μ ≪ ν) :
+    (hU : IsOpen U) (hUc : Convex ℝ U) (hUΩ : U ⊆ Ω) (hu : ConvexOn ℝ Ω u) :
     mongeAmpereMeasure μ (fun x => if x ∈ U then (u x : EReal) else ⊤) =
       (mongeAmpereMeasure μ (fun x => if x ∈ Ω then (u x : EReal) else ⊤)).restrict U := by
+  by_cases h : ∃ ν : Measure E, ν.IsAddHaarMeasure ∧ μ ≪ ν
+  swap
+  · -- without an additive Haar measure dominating `μ` both sides are `0`
+    have h0 (g : E → EReal) : mongeAmpereMeasure μ g = 0 := by
+      rw [mongeAmpereMeasure, dite_eq_right]
+      rintro ⟨-, -, h'⟩
+      exact h h'
+    rw [h0, h0, Measure.restrict_zero]
+  obtain ⟨ν, _, hμ⟩ := h
   ext s hs
   rw [Measure.restrict_apply hs, mongeAmpereMeasure_ite_apply μ hU (hu.subset hUΩ hUc) hμ hs,
     mongeAmpereMeasure_ite_apply μ hΩ hu hμ (hs.inter hU.measurableSet),

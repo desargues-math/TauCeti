@@ -295,8 +295,7 @@ theorem isMongeAmpereViscositySubsolution_of_withDensity_le_mongeAmpereMeasure [
   have hMAB : mongeAmpereMeasure μ
         (fun x => if x ∈ ball x₀ r then ((φ x + t / 2 * ‖x - x₀‖ ^ 2 + c : ℝ) : EReal) else ⊤) ≤
       mongeAmpereMeasure μ (fun x => if x ∈ ball x₀ r then (u x : EReal) else ⊤) := by
-    rw [hψMA, mongeAmpereMeasure_ite_eq_restrict μ hΩ isOpen_ball (convex_ball x₀ r) hbΩ hu
-      AbsolutelyContinuous.rfl]
+    rw [hψMA, mongeAmpereMeasure_ite_eq_restrict μ hΩ isOpen_ball (convex_ball x₀ r) hbΩ hu]
     calc (μ.restrict (ball x₀ r)).withDensity
           (fun x => ENNReal.ofReal (fderiv ℝ (∇ φ) x + t • I).det)
         ≤ (μ.restrict (ball x₀ r)).withDensity fun x => ENNReal.ofReal (f x) :=
@@ -388,8 +387,7 @@ theorem isMongeAmpereViscositySupersolution_of_mongeAmpereMeasure_le_withDensity
   have hMAB : mongeAmpereMeasure μ (fun x => if x ∈ ball x₀ r then (u x : EReal) else ⊤) ≤
       mongeAmpereMeasure μ
         (fun x => if x ∈ ball x₀ r then ((φ x + t / 2 * ‖x - x₀‖ ^ 2 + c : ℝ) : EReal) else ⊤) := by
-    rw [hψMA, mongeAmpereMeasure_ite_eq_restrict μ hΩ isOpen_ball (convex_ball x₀ r) hbΩ hu
-      AbsolutelyContinuous.rfl]
+    rw [hψMA, mongeAmpereMeasure_ite_eq_restrict μ hΩ isOpen_ball (convex_ball x₀ r) hbΩ hu]
     calc (mongeAmpereMeasure μ fun x => if x ∈ Ω then (u x : EReal) else ⊤).restrict (ball x₀ r)
         ≤ ((μ.restrict Ω).withDensity fun x => ENNReal.ofReal (f x)).restrict (ball x₀ r) :=
           Measure.restrict_mono subset_rfl hMA
