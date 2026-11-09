@@ -127,7 +127,7 @@ theorem degree_different_adjoin :
     Divisor.degree (Divisor.different k F hx.isFunctionField_adjoin) = 2 * genus k F + 2 := by
   have h := hurwitz_genus_formula hx.isFunctionField_adjoin hF
     ((k⟮x⟯).val.isIntegrallyClosedIn (k⟮x⟯).val.injective hex) hex
-  rw [Module.finrank_self, genus_adjoin_simple_eq_zero hx, hdeg] at h
+  rw [Module.finrank_self, genus_adjoin_simple_eq_zero, hdeg] at h
   push_cast at h
   linarith
 
