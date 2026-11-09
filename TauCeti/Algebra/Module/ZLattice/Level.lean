@@ -244,6 +244,15 @@ theorem IsEven.cosetRepresentationNumber_eq_zero_of_not_exists_div_of_level_dvd 
 
 /-! ### Full lattices -/
 
+/-- The ambient space of a full lattice with a finite `ℤ`-basis is finite-dimensional: the
+generators of the lattice span it. -/
+theorem finiteDimensional_of_basis [DiscreteTopology L] [IsZLattice ℝ L] {ι : Type*} [Finite ι]
+    (b : Basis ι ℤ L) : FiniteDimensional ℝ E := by
+  obtain ⟨s, hs⟩ : L.FG := Module.Finite.iff_fg.1 (Module.Finite.of_basis b)
+  refine ⟨⟨s, ?_⟩⟩
+  rw [← IsZLattice.span_top (K := ℝ) (L := L), ← hs]
+  exact (span_span_of_tower ℤ ℝ (s : Set E)).symm
+
 section FiniteDimensional
 
 variable [FiniteDimensional ℝ E] [DiscreteTopology L] [IsZLattice ℝ L]
@@ -335,6 +344,7 @@ theorem level_ratModel (hL : IsIntegral L) : (ratModel hL).level = level L := by
     rw [← hnorm]
     exact_mod_cast hm
 
+omit [FiniteDimensional ℝ E] in
 /-- **The level in a basis.** For a full integral lattice `L` with a `ℤ`-basis `b` of real Gram
 matrix `G = (⟪b i, b j⟫)`, the level divides `N` exactly when `N • G⁻¹` is an integral matrix with
 even diagonal. -/
@@ -342,6 +352,7 @@ theorem level_dvd_iff_gram (hL : IsIntegral L) {ι : Type*} [Fintype ι] [Decida
     (b : Basis ι ℤ L) (N : ℕ) :
     level L ∣ N ↔ ∃ M : Matrix ι ι ℤ, (∀ i, Even (M i i)) ∧
       M.map (Int.cast : ℤ → ℝ) = (N : ℝ) • (Matrix.gram ℝ fun i ↦ (b i : E))⁻¹ := by
+  have := finiteDimensional_of_basis b
   -- Transport `b` to a carrier basis of the rational model, whose integral Gram matrix, cast to
   -- `ℝ`, is the real Gram matrix of `b`; the inverse may then be taken over `ℚ`.
   have hgram : Matrix.gram ℝ (fun i ↦ (b i : E)) =
@@ -356,6 +367,7 @@ theorem level_dvd_iff_gram (hL : IsIntegral L) {ι : Type*} [Fintype ι] [Decida
   rw [← (Matrix.map_injective (Rat.castHom ℝ).injective).eq_iff, Matrix.map_map]
   simp [← Matrix.ext_iff]
 
+omit [FiniteDimensional ℝ E] in
 /-- **The level as a least element.** For a full integral lattice `L` with a `ℤ`-basis `b` of real
 Gram matrix `G = (⟪b i, b j⟫)`, the level is the least `N > 0` for which `N • G⁻¹` is an integral
 matrix with even diagonal. -/
@@ -363,6 +375,7 @@ theorem isLeast_level (hL : IsIntegral L) {ι : Type*} [Fintype ι] [DecidableEq
     (b : Basis ι ℤ L) :
     IsLeast {N : ℕ | 0 < N ∧ ∃ M : Matrix ι ι ℤ, (∀ i, Even (M i i)) ∧
       M.map (Int.cast : ℤ → ℝ) = (N : ℝ) • (Matrix.gram ℝ fun i ↦ (b i : E))⁻¹} (level L) :=
+  have := finiteDimensional_of_basis b
   ⟨⟨hL.level_pos, (level_dvd_iff_gram hL b _).mp dvd_rfl⟩,
     fun _ ⟨hN, hM⟩ ↦ Nat.le_of_dvd hN ((level_dvd_iff_gram hL b _).mpr hM)⟩
 
