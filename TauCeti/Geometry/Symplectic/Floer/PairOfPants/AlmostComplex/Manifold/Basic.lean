@@ -77,8 +77,8 @@ private theorem pantsCayley_toLinearMap (w : ℂ) (x : M) :
   congr 1
   funext q
   congr 1
-  have h := (h₀.compatibleAt x).tames.toContinuousLinearMap_cayley
-    (h₀.isNondegenerate.tames_iff.mp (hJ q (q.endCoord w).im) x)
+  have h := (J₀.almostComplexStructureAt x).toContinuousLinearMap_cayley
+    (J q (q.endCoord w).im |>.almostComplexStructureAt x)
     (J₀.almostComplexStructureAt_toLinearMap x).symm
     ((J q (q.endCoord w).im).almostComplexStructureAt_toLinearMap x).symm
   exact (congrArg ContinuousLinearMap.toLinearMap h).symm
