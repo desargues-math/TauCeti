@@ -127,7 +127,6 @@ private lemma submatrix_doubleForkEmbedding_eq (h : IsFiniteType A)
     · exact hentry.mpr hadj
     · exact (hsl i j hij).resolve_right (hadj ∘ hentry.mp)
   have hlen : ∀ k : Fin (n + 2), (k : ℕ) ≤ q.length := fun k ↦ by omega
-  have hlast : q.getVert (n + 1) = v := by simpa only [← hn] using q.getVert_length
   apply Matrix.ext
   intro i j
   rcases eq_or_ne i j with rfl | hij
@@ -155,8 +154,7 @@ private lemma submatrix_doubleForkEmbedding_eq (h : IsFiniteType A)
         (hleft_ne_snd j) (hlen i))) rfl rfl
   · have hij' : i ≠ j := fun h' ↦ hij (congrArg (Sum.inr ∘ Sum.inl) h')
     simp only [hij', ↓reduceIte]
-    exact if_congr (h.isAcyclic_diagramGraph.adj_getVert_iff_succ hq (hlen i) (hlen j)
-      fun h' ↦ hij' (Fin.ext h')) rfl rfl
+    exact if_congr (h.isAcyclic_diagramGraph.adj_getVert_iff_succ hq (hlen i) (hlen j)) rfl rfl
   · refine if_congr ((SimpleGraph.adj_comm _ _ _).trans
       ((h.isAcyclic_diagramGraph.adj_getVert_iff_eq_length hq (hright_adj j)
         (hright_ne_penultimate j) (hlen i)).trans ?_)) rfl rfl

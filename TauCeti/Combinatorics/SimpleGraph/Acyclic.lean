@@ -21,8 +21,8 @@ nonempty finite regular forest.
   forest has degree at most one.
 * `SimpleGraph.IsAcyclic.not_adj_getVert_of_add_one_lt`: nonconsecutive vertices of a path
   in an acyclic graph are not adjacent.
-* `SimpleGraph.IsAcyclic.adj_getVert_iff_succ`: two distinct vertices of a path in an acyclic
-  graph are adjacent exactly when their indices are consecutive.
+* `SimpleGraph.IsAcyclic.adj_getVert_iff_succ`: two vertices of a path in an acyclic graph are
+  adjacent exactly when their indices are consecutive.
 * `SimpleGraph.IsAcyclic.not_adj_getVert_of_adj_start`, `…_of_adj_end`: an off-path neighbour of an
   end of a path is not adjacent to the other path vertices; `adj_getVert_iff_eq_zero`,
   `adj_getVert_iff_eq_length` restate this as an adjacency characterization.
@@ -52,17 +52,18 @@ theorem _root_.SimpleGraph.IsAcyclic.not_adj_getVert_of_add_one_lt {V : Type*}
   have := hp.getVert_injOn (by omega : i + 1 ≤ p.length) hj heq.symm
   omega
 
-/-- In a path of an acyclic graph, two distinct vertices are adjacent exactly when their indices
-are consecutive. -/
+/-- In a path of an acyclic graph, two vertices are adjacent exactly when their indices are
+consecutive. -/
 theorem _root_.SimpleGraph.IsAcyclic.adj_getVert_iff_succ {V : Type*} {G : SimpleGraph V}
     {u v : V} {p : G.Walk u v} (hG : G.IsAcyclic) (hp : p.IsPath) {i j : ℕ}
-    (hi : i ≤ p.length) (hj : j ≤ p.length) (hij : i ≠ j) :
+    (hi : i ≤ p.length) (hj : j ≤ p.length) :
     G.Adj (p.getVert i) (p.getVert j) ↔ i + 1 = j ∨ j + 1 = i := by
   constructor
   · intro hadj
-    rcases lt_or_gt_of_ne hij with hij' | hji'
+    rcases lt_trichotomy i j with hij' | rfl | hji'
     · have : ¬i + 1 < j := fun hlt ↦ hG.not_adj_getVert_of_add_one_lt hp hlt hj hadj
       exact Or.inl (by omega)
+    · exact (hadj.ne rfl).elim
     · have : ¬j + 1 < i := fun hlt ↦ hG.not_adj_getVert_of_add_one_lt hp hlt hi hadj.symm
       exact Or.inr (by omega)
   · rintro (rfl | rfl)
