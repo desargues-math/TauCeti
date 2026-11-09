@@ -115,18 +115,6 @@ private lemma norm_pow_le_of_mem_closedBall {R : ℝ} {w : ℂ} (hw : w ∈ clos
     (k : ℕ) : ‖w ^ k‖ ≤ R ^ k := by
   rw [norm_pow]; exact pow_le_pow_left₀ (norm_nonneg _) (mem_closedBall_zero_iff.1 hw) k
 
-/-- Integrals against measures `ν i` carried by the disc of radius `R`, whose masses tend to zero,
-of functions eventually bounded on that disc by a common constant tend to zero. -/
-private lemma tendsto_integral_of_tendsto_measureReal_univ {𝕜 ι : Type*} [RCLike 𝕜]
-    {L : Filter ι} {R : ℝ} {ν : ι → Measure ℂ} [∀ i, IsFiniteMeasure (ν i)]
-    (hνR : ∀ i, ν i (closedBall 0 R)ᶜ = 0) (hν : Tendsto (fun i => (ν i).real univ) L (𝓝 0))
-    {f : ι → ℂ → 𝕜} {C : ℝ} (hf : ∀ᶠ i in L, ∀ w ∈ closedBall (0 : ℂ) R, ‖f i w‖ ≤ C) :
-    Tendsto (fun i => ∫ w, f i w ∂ν i) L (𝓝 0) := by
-  refine squeeze_zero_norm' ?_ (by simpa using hν.const_mul C)
-  filter_upwards [hf] with i hi
-  have hνae : ∀ᵐ w ∂ν i, w ∈ closedBall (0 : ℂ) R := mem_ae_iff.2 (hνR i)
-  exact norm_integral_le_of_norm_le_const (hνae.mono hi)
-
 /-- The moments of the signed measures `μ i - ν i`, carried by a disc and of eventually bounded
 masses, converge along an ultrafilter. -/
 private lemma exists_tendsto_moments {ι : Type*} {U : Ultrafilter ι} {R : ℝ} (hR : 0 ≤ R)
@@ -226,21 +214,6 @@ private lemma measure_eq_of_integral_pow_eq_of_integral_norm_eval_newtonPolynomi
   exact Measure.ext_of_forall_lt_card_integral_pow_eq_of_support
     P₀.roots.toFinset (hroots₀ hρB hρvar) (hroots₀ hρ'B hρ'var) fun k hk => by
       rw [hρmom k (by omega), hρ'mom k (by omega)]
-
-/-- Integrals of functions converging uniformly on the disc `closedBall 0 R` against measures
-carried by that disc with total mass tending to zero tend to zero. -/
-private lemma tendsto_integral_of_tendsto_measureReal_univ_of_tendstoUniformlyOn {𝕜 ι : Type*}
-    [RCLike 𝕜] {L : Filter ι} {R : ℝ} {ν : ι → Measure ℂ} [∀ i, IsFiniteMeasure (ν i)]
-    (hνR : ∀ i, ν i (closedBall 0 R)ᶜ = 0) (hν : Tendsto (fun i => (ν i).real univ) L (𝓝 0))
-    {f : ι → ℂ → 𝕜} {g : ℂ → 𝕜} (hg : ContinuousOn g (closedBall 0 R))
-    (hfg : TendstoUniformlyOn f g L (closedBall 0 R)) :
-    Tendsto (fun i => ∫ w, f i w ∂ν i) L (𝓝 0) := by
-    obtain ⟨Cg, hCg⟩ := (isCompact_closedBall (0 : ℂ) R).exists_bound_of_continuousOn hg
-    refine tendsto_integral_of_tendsto_measureReal_univ hνR hν (C := Cg + 1) ?_
-    filter_upwards [Metric.tendstoUniformlyOn_iff.1 hfg 1 one_pos] with i hi w hw
-    have h1 := hi w hw
-    rw [dist_comm, dist_eq_norm] at h1
-    linarith [norm_le_norm_add_norm_sub' (f i w) (g w), hCg w hw]
 
 /-- If the measures `μ i` and the root counting measures `τ i` converge narrowly to limits carried
 by a disc and the Newton variances tend to zero, then the signed integrals minus the root sums tend
