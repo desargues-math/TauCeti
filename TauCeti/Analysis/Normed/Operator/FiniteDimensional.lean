@@ -132,9 +132,7 @@ invertible. -/
 theorem isInvertible_of_injective_of_finrank_eq (A : U →L[𝕜] G)
     (hdim : Module.finrank 𝕜 U = Module.finrank 𝕜 G) (hinj : Function.Injective A) :
     A.IsInvertible := by
-  have hinj' : Function.Injective (A : U →ₗ[𝕜] G) := hinj
-  have hsurj := (LinearMap.injective_iff_surjective_of_finrank_eq_finrank hdim).1 hinj'
-  exact ⟨(LinearEquiv.ofBijective _ ⟨hinj', hsurj⟩).toContinuousLinearEquiv, rfl⟩
+  exact ⟨((A : U →ₗ[𝕜] G).linearEquivOfInjective hinj hdim).toContinuousLinearEquiv, rfl⟩
 
 end Invertible
 
