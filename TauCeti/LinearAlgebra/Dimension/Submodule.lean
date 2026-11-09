@@ -151,12 +151,8 @@ theorem injOn_inf_ker_and_finrank_inf_ker_eq {G : Type*} [AddCommGroup G] [Modul
       Module.finrank 𝕜 ↥(T ⊓ LinearMap.ker dg) = Module.finrank 𝕜 G := by
   have : FiniteDimensional 𝕜 T := Module.finite_of_finrank_eq_succ hdim
   have hv0 : v ≠ 0 := by rintro rfl; exact hgv (map_zero _)
-  have hsurj : Function.Surjective (π.domRestrict T) := by
-    intro g
-    obtain ⟨x, rfl⟩ := hπs g
-    obtain ⟨t, ht, k, hk, rfl⟩ :=
-      Submodule.mem_sup.1 (hTπ ▸ Submodule.mem_top : x ∈ T ⊔ LinearMap.ker π)
-    exact ⟨⟨t, ht⟩, by simp [LinearMap.mem_ker.1 hk]⟩
+  have hsurj : Function.Surjective (π.domRestrict T) :=
+    (LinearMap.surjective_domRestrict_iff hπs).2 (codisjoint_iff.2 hTπ)
   have : FiniteDimensional 𝕜 G := Module.Finite.of_surjective _ hsurj
   have hker : LinearMap.ker (π.domRestrict T) = (T ⊓ LinearMap.ker π).comap T.subtype := by
     rw [LinearMap.ker_domRestrict, Submodule.comap_inf, Submodule.comap_subtype_self, top_inf_eq]
