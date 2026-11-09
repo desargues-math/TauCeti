@@ -229,11 +229,12 @@ theorem tendsto_integral_of_tendsto_measureReal_univ {α G ι : Type*} [Measurab
 
 /-- Integrals of functions converging uniformly on the closed ball `Metric.closedBall 0 R` against
 measures carried by that ball with total mass tending to zero tend to zero. -/
-theorem tendsto_integral_of_tendsto_measureReal_univ_of_tendstoUniformlyOn {E 𝕜 ι : Type*}
-    [NormedAddCommGroup E] [ProperSpace E] [MeasurableSpace E] [RCLike 𝕜] {L : Filter ι} {R : ℝ}
+theorem tendsto_integral_of_tendsto_measureReal_univ_of_tendstoUniformlyOn {E G ι : Type*}
+    [NormedAddCommGroup E] [ProperSpace E] [MeasurableSpace E]
+    [NormedAddCommGroup G] [NormedSpace ℝ G] {L : Filter ι} {R : ℝ}
     {ν : ι → Measure E} [∀ i, IsFiniteMeasure (ν i)]
     (hνR : ∀ i, ν i (Metric.closedBall 0 R)ᶜ = 0) (hν : Tendsto (fun i => (ν i).real univ) L (𝓝 0))
-    {f : ι → E → 𝕜} {g : E → 𝕜} (hg : ContinuousOn g (Metric.closedBall 0 R))
+    {f : ι → E → G} {g : E → G} (hg : ContinuousOn g (Metric.closedBall 0 R))
     (hfg : TendstoUniformlyOn f g L (Metric.closedBall 0 R)) :
     Tendsto (fun i => ∫ w, f i w ∂ν i) L (𝓝 0) := by
   obtain ⟨Cg, hCg⟩ := (isCompact_closedBall (0 : E) R).exists_bound_of_continuousOn hg
