@@ -121,7 +121,6 @@ theorem finiteDimensional_of_isScalarTower : FiniteDimensional 𝕜' (E →L[�
 
 end ScalarExtension
 
-
 section Invertible
 
 variable {𝕜 U G : Type*} [NontriviallyNormedField 𝕜] [CompleteSpace 𝕜]
