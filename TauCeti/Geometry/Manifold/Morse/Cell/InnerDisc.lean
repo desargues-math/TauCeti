@@ -173,7 +173,7 @@ private theorem chartStage_le (q : I × TopCat.disk.{u} k) :
     f (chartStage R hr hk hε hd ψ hball hf g q) ≤ c + ε := by
   rw [chartStage]
   refine TopCat.discGlue_mem (S := {x | f x ≤ c + ε}) _ _ _ _ (fun q ↦ ?_) (fun q ↦ ?_) _
-  · exact (OpenPartialHomeomorph.apply_morseCellMap_le hball hf hk hε
+  · exact (OpenPartialHomeomorph.apply_morseCellMap_le hball hf hk
       ((g.norm_map _).trans_le ((mem_closedBall_zero_iff.1 q.2.2).trans d.2.2))).trans
       (le_add_of_nonneg_right hε)
   · exact le_of_mem_sublevel hε _
