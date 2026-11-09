@@ -210,7 +210,7 @@ theorem deformationComplexStructure_deformationComplexStructure {p : ℝ × ⋀[
     rw [AlmostComplexStructure.inner_kahlerForm_self hJ, Fact.out (p := finrank ℝ V = 4)]
     norm_num
   have hDω : exteriorPower.lieMap 2 J.toLinearMap J.kahlerForm = 0 :=
-    AlmostComplexStructure.lieMap_kahlerForm hJ
+    AlmostComplexStructure.lieMap_kahlerForm J
   -- `⟪ω, D_J η⟫ = -⟪D_J ω, η⟫ = 0`.
   have hωD : ⟪J.kahlerForm, exteriorPower.lieMap 2 J.toLinearMap p.2⟫ = 0 := by
     rw [real_inner_comm, inner_lieMap_left
