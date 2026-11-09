@@ -121,7 +121,7 @@ theorem _root_.SimpleGraph.IsAcyclic.not_adj_getVert_of_adj_end {V : Type*} {G :
 
 /-- In an acyclic graph, an off-path neighbour `x` of the start of a path (other than the path's
 second vertex) is adjacent to the vertex `j` of the path exactly when `j = 0`. -/
-@[simp] theorem _root_.SimpleGraph.IsAcyclic.adj_getVert_iff_eq_zero {V : Type*}
+theorem _root_.SimpleGraph.IsAcyclic.adj_getVert_iff_eq_zero {V : Type*}
     {G : SimpleGraph V} {u v x : V} {p : G.Walk u v} (hG : G.IsAcyclic)
     (hp : p.IsPath) (hux : G.Adj u x) (hx : x ≠ p.snd) {j : ℕ} (hj : j ≤ p.length) :
     G.Adj x (p.getVert j) ↔ j = 0 := by
@@ -132,7 +132,7 @@ second vertex) is adjacent to the vertex `j` of the path exactly when `j = 0`. -
 /-- In an acyclic graph, an off-path neighbour `x` of the end of a path (other than the path's
 penultimate vertex) is adjacent to the vertex `j` of the path exactly when `j` is the last
 index. -/
-@[simp] theorem _root_.SimpleGraph.IsAcyclic.adj_getVert_iff_eq_length {V : Type*}
+theorem _root_.SimpleGraph.IsAcyclic.adj_getVert_iff_eq_length {V : Type*}
     {G : SimpleGraph V} {u v x : V} {p : G.Walk u v} (hG : G.IsAcyclic)
     (hp : p.IsPath) (hvx : G.Adj v x) (hx : x ≠ p.penultimate) {j : ℕ} (hj : j ≤ p.length) :
     G.Adj x (p.getVert j) ↔ j = p.length := by

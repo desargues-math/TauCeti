@@ -142,8 +142,11 @@ private lemma submatrix_doubleForkEmbedding_eq (h : IsFiniteType A)
       doubleForkCartanMatrix_inr_inl_inr_inr, doubleForkCartanMatrix_inr_inr_inl,
       doubleForkCartanMatrix_inr_inr_inr_inl, doubleForkCartanMatrix_inr_inr_inr_inr]
   · have hij' : i ≠ j := fun h' ↦ hij (congrArg Sum.inl h')
-    simp only [hij', not_adj_of_adj_of_adj h (hleft_adj i) (hleft_adj j)
-      fun heq ↦ hij' (hleft_inj heq), ↓reduceIte]
+    have hnadj : ¬(diagramGraph A).Adj (left i) (left j) :=
+      SimpleGraph.isIndepSet_neighborSet_of_triangleFree _
+        h.isAcyclic_diagramGraph.cliqueFree_three _ (hleft_adj i) (hleft_adj j)
+        fun heq ↦ hij' (hleft_inj heq)
+    simp only [hij', hnadj, ↓reduceIte]
   · exact if_congr (h.isAcyclic_diagramGraph.adj_getVert_iff_eq_zero hq (hleft_adj i)
       (hleft_ne_snd i) (hlen j)) rfl rfl
   · simp only [hleft_right_not_adj i j, ↓reduceIte]
@@ -163,8 +166,11 @@ private lemma submatrix_doubleForkEmbedding_eq (h : IsFiniteType A)
       (hright_ne_penultimate i) (hlen j)).trans ?_) rfl rfl
     omega
   · have hij' : i ≠ j := fun h' ↦ hij (congrArg (Sum.inr ∘ Sum.inr) h')
-    simp only [hij', not_adj_of_adj_of_adj h (hright_adj i) (hright_adj j)
-      fun heq ↦ hij' (hright_inj heq), ↓reduceIte]
+    have hnadj : ¬(diagramGraph A).Adj (right i) (right j) :=
+      SimpleGraph.isIndepSet_neighborSet_of_triangleFree _
+        h.isAcyclic_diagramGraph.cliqueFree_three _ (hright_adj i) (hright_adj j)
+        fun heq ↦ hij' (hright_inj heq)
+    simp only [hij', hnadj, ↓reduceIte]
 
 /-- **Two distinct branch vertices in one simply-laced finite-type component contain an affine
 `D` principal submatrix.** The middle `Fin (n + 2)` is the path between the branch vertices, and
