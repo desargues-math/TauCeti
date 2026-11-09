@@ -156,8 +156,7 @@ private theorem hamiltonianCurvature_negativePlanePerturbation_eq_zero (ω : Sym
     · simpa using hHs
     · rw [Pi.single_eq_of_ne hq]
       exact contDiff_const
-  have h := ω.hamiltonianCurvature_pairOfPantsPerturbation_eq_zero_of_two_lt hH' hHs'
-    ⟨hw₀, hw₁⟩ hs x
+  have h := ω.hamiltonianCurvature_pairOfPantsPerturbation_eq_zero_of_two_lt hH' hHs' hs x
   rwa [pairOfPantsPerturbation_single_inf] at h
 
 /-- For `R ≥ 2`, the curvature integral over the disc `‖w‖ ≤ 2 exp (2πR)` is the curvature

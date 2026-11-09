@@ -173,8 +173,7 @@ theorem integral_floerEnergyDensity_pairOfPantsPerturbation_truncation_eq_sum_ha
         R < q.endSign * (q.endCoord (Complex.equivRealProdCLM.symm z)).re := by
       by_contra! h
       exact hz.2 (mem_truncation.2 ⟨hz.1.1, hz.1.2, h⟩)
-    exact ω.hamiltonianCurvature_pairOfPantsPerturbation_eq_zero_of_two_lt hH hHs hz.1
-      (by linarith) _
+    exact ω.hamiltonianCurvature_pairOfPantsPerturbation_eq_zero_of_two_lt hH hHs (by linarith) _
   rw [hcurv, integral_floerEnergyDensity_pairOfPantsPerturbation_truncation ω hH hHs
       (hu.of_le one_le_two) (by linarith : (1 : ℝ) ≤ R),
     integral_symplecticForm_fderiv_truncation ω hu (by linarith),
