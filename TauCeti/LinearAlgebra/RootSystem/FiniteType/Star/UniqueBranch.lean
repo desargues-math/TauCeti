@@ -65,21 +65,6 @@ private lemma matrix_apply_eq_neg_one_iff_adj (h : IsFiniteType A) {i j : B} (hi
     · exact (hij' hij0).elim
     · exact hij1
 
-private lemma adj_getVert_iff_succ {V : Type*} {G : SimpleGraph V} {u v : V}
-    {p : G.Walk u v} (hG : G.IsAcyclic) (hp : p.IsPath) {i j : ℕ}
-    (hi : i ≤ p.length) (hj : j ≤ p.length) (hij : i ≠ j) :
-    G.Adj (p.getVert i) (p.getVert j) ↔ i + 1 = j ∨ j + 1 = i := by
-  constructor
-  · intro hadj
-    rcases lt_or_gt_of_ne hij with hij' | hji'
-    · have : ¬i + 1 < j := fun hlt ↦ hG.not_adj_getVert_of_add_one_lt hp hlt hj hadj
-      exact Or.inl (by omega)
-    · have : ¬j + 1 < i := fun hlt ↦ hG.not_adj_getVert_of_add_one_lt hp hlt hi hadj.symm
-      exact Or.inr (by omega)
-  · rintro (rfl | rfl)
-    · exact p.adj_getVert_succ (by omega)
-    · exact (p.adj_getVert_succ (by omega)).symm
-
 /-- Embed the two left leaves, the path, and the two right leaves in their corresponding
 summands. -/
 private def doubleForkEmbedding {V : Type*} {G : SimpleGraph V} {u v : V} {n : ℕ}
@@ -167,7 +152,7 @@ private lemma submatrix_doubleForkEmbedding_eq (h : IsFiniteType A)
         (hleft_ne_snd j) (hlen i))) rfl rfl
   · have hij' : i ≠ j := fun h' ↦ hij (congrArg (Sum.inr ∘ Sum.inl) h')
     simp only [hij', ↓reduceIte]
-    exact if_congr (adj_getVert_iff_succ h.isAcyclic_diagramGraph hq (hlen i) (hlen j)
+    exact if_congr (h.isAcyclic_diagramGraph.adj_getVert_iff_succ hq (hlen i) (hlen j)
       fun h' ↦ hij' (Fin.ext h')) rfl rfl
   · refine if_congr ((SimpleGraph.adj_comm _ _ _).trans
       ((h.isAcyclic_diagramGraph.adj_getVert_iff_eq_length hq (hright_adj j)
