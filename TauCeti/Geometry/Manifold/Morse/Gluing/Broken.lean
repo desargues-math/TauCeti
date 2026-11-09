@@ -98,8 +98,8 @@ private theorem exists_morseBox_of_broken (hX : IsAdaptedPseudoGradient f X)
   obtain ⟨ρu, hρu, hu⟩ := (hX.neg hf).exists_forall_mem_stableSet_iff (φ.neg hnd) hφ' hfd'
   simp only [MorseChart.neg_toChart, MorseChart.neg_coord, MorseChart.neg_weight, Pi.neg_apply,
     Left.neg_neg_iff, ← hX.unstableSet_eq_stableSet_neg hf] at hu
-  obtain ⟨ρc, hρc, hc⟩ := hX.exists_forall_coord_flow_eq_exp_smul φ hφ hfd
-  obtain ⟨ρc', hρc', hc'⟩ := (hX.neg hf).exists_forall_coord_flow_eq_exp_smul (φ.neg hnd) hφ' hfd'
+  obtain ⟨ρc, hρc, hc⟩ := hX.exists_forall_coord_flow_eq_exp_smul φ hφ
+  obtain ⟨ρc', hρc', hc'⟩ := (hX.neg hf).exists_forall_coord_flow_eq_exp_smul (φ.neg hnd) hφ'
   simp only [MorseChart.neg_toChart, MorseChart.neg_coord, hX.neg_flow hf, Flow.stableSet_reverse,
     Flow.reverse_apply] at hc'
   obtain ⟨rT, hrT, hT⟩ := φ.exists_pos_forall_norm_lt_mem_target

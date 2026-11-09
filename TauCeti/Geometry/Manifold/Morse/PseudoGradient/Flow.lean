@@ -87,6 +87,19 @@ noncomputable def flow (hX : IsAdaptedPseudoGradient f X) : Flow ℝ M :=
 
 variable (hX : IsAdaptedPseudoGradient f X)
 
+omit [CompactSpace M] [T2Space M] in
+include hX in
+/-- The function of an adapted pseudo-gradient is differentiable: where its derivative is nonzero
+it is differentiable by definition of `mfderiv`, and a zero of the derivative has a Morse chart. -/
+theorem mdifferentiable : MDifferentiable 𝓘(ℝ, E) 𝓘(ℝ) f := fun p ↦ by
+  by_contra hd
+  obtain ⟨φ, -⟩ := hX.exists_morseChart p (mfderiv_zero_of_not_mdifferentiableAt hd)
+  have h : MDifferentiableAt 𝓘(ℝ, E) 𝓘(ℝ) (φ.quadratic ∘ φ.toChart) p :=
+    (φ.differentiableAt_quadratic _).mdifferentiableAt.comp p
+      (φ.mdifferentiableAt_toChart φ.mem_source)
+  exact hd (h.congr_of_eventuallyEq (Filter.eventuallyEq_of_mem
+    (φ.toChart.open_source.mem_nhds φ.mem_source) φ.eqOn_quadratic))
+
 /-- The flow at time `t` is the maximal integral curve of the pseudo-gradient at time `t`. -/
 theorem flow_apply (t : ℝ) (y : M) : hX.flow t y = maximalIntegralCurve X y t := by
   rw [flow, globalFlow_apply]

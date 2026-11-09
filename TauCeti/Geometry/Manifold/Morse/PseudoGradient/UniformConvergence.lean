@@ -81,7 +81,7 @@ theorem exists_forall_norm_coord_flow_le_mul_exp (φ : MorseChart E f x)
     ∃ T C : ℝ, ∀ y ∈ K, ∀ t, T ≤ t → hX.flow t y ∈ φ.toChart.source ∧
       (∀ i, φ.weight i < 0 → φ.coord (φ.toChart (hX.flow t y)) i = 0) ∧
       ‖φ.coord (φ.toChart (hX.flow t y))‖ ≤ C * Real.exp (-t) := by
-  obtain ⟨ρ, hρ, hρs⟩ := hX.exists_forall_coord_flow_eq_exp_smul φ hφ hf
+  obtain ⟨ρ, hρ, hρs⟩ := hX.exists_forall_coord_flow_eq_exp_smul φ hφ
   obtain ⟨ε, hε, hεs⟩ := hX.exists_forall_mem_stableSet_iff φ hφ hf
   -- The open cube `V` of radius `min ρ ε` around `x`, read in the chart.
   set δ := min ρ ε
