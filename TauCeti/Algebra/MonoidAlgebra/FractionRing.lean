@@ -49,7 +49,7 @@ namespace TauCeti.IsFractionRing
 open scoped TensorProduct
 
 variable {R : Type*} [CommRing R] (Q : Type*) [Field Q] [Algebra R Q]
-  [IsFractionRing R Q] {G : Type*} [Group G] [Finite G]
+  [IsFractionRing R Q] {G : Type*} [Group G]
   {M N P : Type*} [AddCommGroup M] [Module R M] [Module (MonoidAlgebra R G) M]
   [IsScalarTower R (MonoidAlgebra R G) M]
   [AddCommGroup N] [Module R N] [Module (MonoidAlgebra R G) N]
@@ -65,6 +65,8 @@ theorem nonempty_tensor_linearEquiv_prod_of_exact [NeZero (Nat.card G : R)]
     {f : M →ₗ[MonoidAlgebra R G] N} {g : N →ₗ[MonoidAlgebra R G] P}
     (hfg : Function.Exact f g) (hf : Function.Injective f) (hg : Function.Surjective g) :
     Nonempty ((N ⊗[R] Q) ≃ₗ[MonoidAlgebra R G] ((M × P) ⊗[R] Q)) := by
+  -- A nonzero order forces the group to be finite.
+  have : Finite G := Nat.finite_of_card_ne_zero fun h ↦ NeZero.ne (Nat.card G : R) (by simp [h])
   have := Fintype.ofFinite G
   -- `Q` is flat over `R`, so `0 → M ⊗ Q → N ⊗ Q → P ⊗ Q → 0` is exact.
   have := _root_.IsLocalization.flat Q (nonZeroDivisors R)
