@@ -124,14 +124,14 @@ theorem flowDiffeomorph_symm_apply (t : ℝ) (y : M) :
   rw [flowDiffeomorph, globalFlowDiffeomorph_symm_apply, hX.flow_apply, globalFlow_apply]
 
 /-- The derivative of `f` along an orbit of the flow is `df(X)`. -/
-theorem hasDerivAt_comp_flow {y : M} {t : ℝ} :
+theorem hasDerivAt_comp_flow (y : M) (t : ℝ) :
     HasDerivAt (fun s ↦ f (hX.flow s y)) (mvfderiv 𝓘(ℝ, E) f (hX.flow t y) (X (hX.flow t y))) t :=
   Manifold.hasDerivAt_comp_curve (γ := fun s ↦ hX.flow s y) (hX.mdifferentiable _)
     (hX.isMIntegralCurve_flow y t)
 
 /-- `f` is antitone along every orbit of the flow. -/
 theorem antitone_flow (y : M) : Antitone fun t ↦ f (hX.flow t y) :=
-  hX.antitone_comp (fun _ ↦ hX.mdifferentiable _) (hX.isMIntegralCurve_flow y)
+  hX.antitone_comp (hX.isMIntegralCurve_flow y)
 
 /-- Critical points of `f` are rest points of the flow. -/
 theorem flow_apply_of_mfderiv_eq_zero {x : M} (hx : mfderiv 𝓘(ℝ, E) 𝓘(ℝ) f x = 0) (t : ℝ) :
@@ -143,7 +143,7 @@ theorem flow_apply_of_mfderiv_eq_zero {x : M} (hx : mfderiv 𝓘(ℝ, E) 𝓘(�
 theorem mfderiv_eq_zero_of_forall_eq {z : M}
     (hz : ∀ t, f (hX.flow t z) = f z) : mfderiv 𝓘(ℝ, E) 𝓘(ℝ) f z = 0 := by
   by_contra hcrit
-  have hd := hX.hasDerivAt_comp_flow (y := z) (t := 0)
+  have hd := hX.hasDerivAt_comp_flow z 0
   have horbit : (fun s ↦ f (hX.flow s z)) = fun _ ↦ f z := funext hz
   rw [horbit, Flow.map_zero_apply] at hd
   exact (hX.mvfderiv_apply_lt_zero z hcrit).ne (hd.unique (hasDerivAt_const _ _))

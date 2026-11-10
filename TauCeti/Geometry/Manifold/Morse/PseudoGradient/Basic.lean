@@ -42,8 +42,6 @@ stable and unstable sets are exactly the coordinate planes, and the remaining an
 * `TauCeti.IsAdaptedPseudoGradient.mvfderiv_apply_nonpos`: `df(X) ≤ 0` everywhere.
 * `TauCeti.IsAdaptedPseudoGradient.eq_zero_iff`: the zeros of an adapted pseudo-gradient are
   exactly the critical points of `f`.
-* `TauCeti.IsAdaptedPseudoGradient.antitone_comp`: `f` is antitone along every integral curve
-  along which it is differentiable.
 * `TauCeti.MorseChart.coord_mfderiv_neg`: in the negated Morse chart, `-X` is the linear field.
 * `TauCeti.IsAdaptedPseudoGradient.neg`: `-X` is a pseudo-gradient adapted to `-f`.
 * `TauCeti.IsAdaptedPseudoGradient.strictAnti_comp`: `f` is strictly antitone along an integral
@@ -130,13 +128,6 @@ theorem eq_zero_of_mfderiv_eq_zero (hX : IsAdaptedPseudoGradient f X) {x : M}
 theorem eq_zero_iff (hX : IsAdaptedPseudoGradient f X) {x : M} :
     X x = 0 ↔ mfderiv 𝓘(ℝ, E) 𝓘(ℝ) f x = 0 :=
   ⟨fun h ↦ by_contra fun hx ↦ hX.ne_zero_of_mfderiv_ne_zero hx h, hX.eq_zero_of_mfderiv_eq_zero⟩
-
-/-- **`f` is antitone along every integral curve of an adapted pseudo-gradient** along which `f` is
-differentiable. -/
-theorem antitone_comp (hX : IsAdaptedPseudoGradient f X)
-    (hf : ∀ t, MDifferentiableAt 𝓘(ℝ, E) 𝓘(ℝ) f (γ t)) (hγ : IsMIntegralCurve γ X) :
-    Antitone (f ∘ γ) :=
-  hγ.antitone_comp hf fun t ↦ hX.mvfderiv_apply_nonpos (γ t)
 
 /-- **`f` is strictly antitone along an integral curve of an adapted pseudo-gradient** that never
 meets a critical point. Differentiability of `f` along the curve is automatic, since `mfderiv`
