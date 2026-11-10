@@ -174,7 +174,7 @@ the closure of the stable manifold of a critical point `q` meets the stable mani
 critical point `b`, then `ind q < ind b`. -/
 theorem IsMorseSmale.manifoldMorseIndex_lt_of_mem_closure_stableSet_inter_stableSet
     {hX : IsAdaptedPseudoGradient f X} (h : hX.IsMorseSmale) (hf : IsMorse 𝓘(ℝ, E) f) {b q : M}
-    (hb : mfderiv 𝓘(ℝ, E) 𝓘(ℝ) f b = 0) (hq : mfderiv 𝓘(ℝ, E) 𝓘(ℝ) f q = 0) (hbq : b ≠ q)
+    (hb : mfderiv 𝓘(ℝ, E) 𝓘(ℝ) f b = 0) (hbq : b ≠ q)
     (hne : (closure (hX.flow.stableSet q) ∩ hX.flow.stableSet b).Nonempty) :
     manifoldMorseIndex 𝓘(ℝ, E) f q < manifoldMorseIndex 𝓘(ℝ, E) f b := by
   have hdf : MDifferentiable 𝓘(ℝ, E) 𝓘(ℝ) f := hf.contMDiff.mdifferentiable (by simp)
@@ -264,7 +264,7 @@ theorem IsMorseSmale.isClosed_unstableSet_inter_stableSet_inter_level
         ⟨y, hyU, hya⟩
   have hbq : b = q ∨ manifoldMorseIndex 𝓘(ℝ, E) f q < manifoldMorseIndex 𝓘(ℝ, E) f b :=
     or_iff_not_imp_left.2 fun hbq ↦
-      h.manifoldMorseIndex_lt_of_mem_closure_stableSet_inter_stableSet hf hb hq hbq ⟨y, hyS, hyb⟩
+      h.manifoldMorseIndex_lt_of_mem_closure_stableSet_inter_stableSet hf hb hbq ⟨y, hyS, hyb⟩
   have hab : a ≠ b := by
     rintro rfl
     rcases hap with rfl | hap
