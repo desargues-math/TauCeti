@@ -39,6 +39,8 @@ a permutation of the vertices of a simplex, acts on integrals over it.
   `c⁻¹ μ` on `f '' s`.
 * `MeasureTheory.map_restrict_le_smul_restrict_of_differentiableOn`: the same for `f`
   differentiable on an open set `s` and mapping it into `t`, with `μ` on `t` as the target.
+* `ContinuousAffineMap.measurePreserving_of_abs_det_eq_one`: a continuous affine self-map whose
+  linear part has `|det| = 1` preserves an additive Haar measure.
 * `ContinuousAffineMap.setIntegral_comp_of_image_eq`: integrals over `s` are invariant under a
   continuous affine map carrying `s` onto itself, when `s` has finite measure.
 -/
@@ -95,6 +97,25 @@ variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensi
   [MeasurableSpace E] [BorelSpace E] (μ : Measure E) [μ.IsAddHaarMeasure]
   [NormedAddCommGroup F] [NormedSpace ℝ F] {s : Set E}
 
+/-- A continuous affine self-map of a finite-dimensional real space whose linear part has
+determinant of absolute value `1` preserves an additive Haar measure. -/
+theorem measurePreserving_of_abs_det_eq_one (T : E →ᴬ[ℝ] E) (habs : |T.contLinear.det| = 1) :
+    MeasurePreserving T μ μ := by
+  have hdet : T.contLinear.det ≠ 0 := fun h ↦ by simp [h] at habs
+  have hT0 : (T : E → E) = (fun y ↦ y + T 0) ∘ T.contLinear := by
+    funext x
+    simpa [add_comm] using congrFun T.toAffineMap.decomp x
+  have hL : μ.map T.contLinear = μ := by
+    have h := Measure.map_linearMap_addHaar_eq_smul_addHaar μ hdet
+    rw [ContinuousLinearMap.coe_coe] at h
+    have h1 : |(LinearMap.det (T.contLinear : E →ₗ[ℝ] E))⁻¹| = 1 := by
+      rw [abs_inv]; exact inv_eq_one.2 habs
+    rw [h, h1]
+    simp
+  refine ⟨T.continuous.measurable, ?_⟩
+  rw [hT0, ← Measure.map_map (measurable_add_const _) T.contLinear.continuous.measurable, hL,
+    map_add_right_eq_self]
+
 /-- **Integrals over a set are invariant under an affine self-map of it.** If a continuous affine
 map `T` carries a set `s` of finite measure onto itself, then
 `∫ x in s, g (T x) ∂μ = ∫ x in s, g x ∂μ` for every `g`. -/
@@ -121,17 +142,7 @@ theorem setIntegral_comp_of_image_eq (T : E →ᴬ[ℝ] E) (hμ : μ s ≠ ∞)
     rw [hT] at h
     exact ENNReal.ofReal_eq_one.1 ((ENNReal.mul_eq_right h₀ hμ).1 h.symm)
   -- Hence `T` preserves `μ`, and it is a measurable embedding.
-  have hmap : μ.map T = μ := by
-    have hL : μ.map T.contLinear = μ := by
-      rw [show (T.contLinear : E → E) = ((T.contLinear : E →ₗ[ℝ] E) : E → E) from rfl,
-        Measure.map_linearMap_addHaar_eq_smul_addHaar μ hdet]
-      have h1 : |(LinearMap.det (T.contLinear : E →ₗ[ℝ] E))⁻¹| = 1 := by
-        rw [abs_inv]; exact inv_eq_one.2 habs
-      rw [h1]
-      simp
-    rw [hT0, ← Measure.map_map (measurable_add_const _) T.contLinear.continuous.measurable, hL,
-      map_add_right_eq_self]
-  have hmp : MeasurePreserving T μ μ := ⟨T.continuous.measurable, hmap⟩
+  have hmp := measurePreserving_of_abs_det_eq_one μ T habs
   have hpre : T ⁻¹' s = s := by simpa [hT] using hinj.preimage_image s
   rw [← hmp.setIntegral_preimage_emb (T.continuous.measurableEmbedding hinj) g s, hpre]
 
