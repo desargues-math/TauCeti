@@ -80,16 +80,17 @@ theorem iUnion_eq_union_of_pairwise_disjoint {α : Type*} {C : ℕ → Set α}
     Disjoint (⋃ i ∈ Finset.range k, C i) (C k ∪ ⋃ i, ⋃ (_ : k < i), C i) ∧
     Disjoint (C k) (⋃ i, ⋃ (_ : k < i), C i) := by
   refine ⟨?_, ?_, ?_⟩
-  · ext x
-    simp only [mem_union, mem_iUnion, Finset.mem_range, exists_prop]
-    constructor
-    · rintro ⟨i, hi⟩
-      rcases lt_trichotomy i k with hik | rfl | hik
-      · exact Or.inl ⟨i, hik, hi⟩
-      · exact Or.inr (Or.inl hi)
-      · exact Or.inr (Or.inr ⟨i, hik, hi⟩)
-    · rintro (⟨i, -, hi⟩ | hi | ⟨i, -, hi⟩)
-      exacts [⟨i, hi⟩, ⟨k, hi⟩, ⟨i, hi⟩]
+  · -- Split off the earlier sets with `iSup_split`, then the `k`-th set from the later ones.
+    have h : ⋃ i, ⋃ (_ : k ≤ i), C i = C k ∪ ⋃ i, ⋃ (_ : k < i), C i := by
+      ext x
+      simp only [mem_iUnion, mem_union, le_iff_eq_or_lt, exists_prop]
+      constructor
+      · rintro ⟨i, rfl | hi, hx⟩
+        exacts [Or.inl hx, Or.inr ⟨i, hi, hx⟩]
+      · rintro (hx | ⟨i, hi, hx⟩)
+        exacts [⟨k, Or.inl rfl, hx⟩, ⟨i, Or.inr hi, hx⟩]
+    rw [← h]
+    simpa only [Finset.mem_range, not_lt, Set.iSup_eq_iUnion] using iSup_split C (fun i ↦ i < k)
   · simp only [disjoint_union_right, disjoint_iUnion_left, disjoint_iUnion_right,
       Finset.mem_range]
     exact ⟨fun i hi ↦ hC (hi.ne), fun i hi i' hi' ↦ hC (by omega : i' ≠ i)⟩
