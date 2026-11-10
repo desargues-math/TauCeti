@@ -285,14 +285,19 @@ theorem norm_sub_endCenter_div_plumbingFactor_le_iff {q : Puncture} (hq : q ≠ 
   rw [norm_div, norm_plumbingFactor, norm_endScale hq, div_le_iff₀ (by positivity), hexp]
   constructor <;> intro h <;> linarith
 
-/-- At a positive end `q`, the image of the point `1` under the plumbing map of neck length `L`
-lies in the open disc `‖· - c_q‖ < exp (-2π(L - 1)) / 2` bounded by the circle `s = L - 1` of the
-end `q`. -/
-theorem norm_plumbingMap_one_sub_endCenter_lt {q : Puncture} (hq : q ≠ inf) (L : ℝ) :
+/-- The image of the point `1` under the plumbing map of neck length `L` lies in the open disc
+`‖· - c_q‖ < exp (-2π(L - 1)) / 2` bounded by the circle `s = L - 1` of the end `q`. -/
+theorem norm_plumbingMap_one_sub_endCenter_lt (q : Puncture) (L : ℝ) :
     ‖q.plumbingMap L 1 - q.endCenter‖ < Real.exp (-(2 * π * (L - 1))) / 2 := by
-  rw [plumbingMap_apply, add_sub_cancel_left, mul_one, norm_plumbingFactor, norm_endScale hq]
-  have := Real.exp_lt_exp.2 (by nlinarith [Real.pi_pos] : -(2 * π * L) < -(2 * π * (L - 1)))
-  linarith [Real.exp_pos (-(2 * π * L))]
+  have hs : ‖q.endScale‖ ≤ 2 := by cases q <;> simp <;> norm_num
+  have h2 : 2 < Real.exp (2 * π) := by
+    linarith [Real.add_one_lt_exp (by positivity : 2 * π ≠ 0), Real.two_le_pi]
+  have hexp : Real.exp (-(2 * π * (L - 1))) = Real.exp (2 * π) * Real.exp (-(2 * π * L)) := by
+    rw [← Real.exp_add]
+    ring_nf
+  rw [plumbingMap_apply, add_sub_cancel_left, mul_one, norm_plumbingFactor, hexp]
+  have := Real.exp_pos (-(2 * π * L))
+  nlinarith [mul_le_mul_of_nonneg_right hs this.le, mul_lt_mul_of_pos_right h2 this]
 
 /-- **The plumbing map preserves the angular forms.** It pulls the angular form `dt` of the end
 `q` back to the angular form `dt` of the end at `∞`. -/

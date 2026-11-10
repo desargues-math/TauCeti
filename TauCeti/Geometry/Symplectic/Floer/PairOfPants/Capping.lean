@@ -421,7 +421,7 @@ theorem contMDiffAt_plumbedPerturbation_single_inf {n : ℕ∞} (hq : q ≠ inf)
       rw [h, sub_self, norm_zero] at hge
       linarith
     have h₁ : w ≠ q.plumbingMap L 1 := fun h =>
-      (h ▸ norm_plumbingMap_one_sub_endCenter_lt hq L).not_ge hge
+      (h ▸ norm_plumbingMap_one_sub_endCenter_lt q L).not_ge hge
     exact contMDiffAt_plumbedPerturbation hq
       (forall_single inf (P := fun f => Periodic f 1) (fun _ => rfl) (hHb q)) hHb
       (forall_single inf (P := fun f => ContMDiff (𝓘(ℝ, ℝ).prod I) 𝓘(ℝ, ℝ) n (uncurry f))
