@@ -9,6 +9,7 @@ public import TauCeti.Geometry.Manifold.TangentCone
 import TauCeti.Analysis.Calculus.TangentCone.Chart
 import TauCeti.Analysis.Normed.Operator.FiniteDimensional
 import TauCeti.LinearAlgebra.Dimension.Submodule
+import TauCeti.LinearAlgebra.Dual.Lemmas
 
 /-!
 # Level discs transverse to a projection
@@ -138,8 +139,12 @@ theorem exists_param_inter_preimage_of_span_mtangentConeAt_sup_eq_top [FiniteDim
   have hπdisj := Submodule.disjoint_inf_ker_ker_of_finrank_eq_succ (π := π) (dg := dg)
     (v := v) (hP.comp Ae.surjective) (top_unique (htr ▸ sup_le_sup_left hT'π T)) hdim hvs
     (hT'π hvs') hgv
-  have hdimF := Submodule.finrank_inf_ker_eq_of_finrank_eq_succ (G := G) (dg := dg) (v := v) hdim
-    hvs hgv
+  have hdimF : Module.finrank 𝕜 ↥(T ⊓ LinearMap.ker (dg : E →ₗ[𝕜] 𝕜)) = Module.finrank 𝕜 G := by
+    have : FiniteDimensional 𝕜 T := Module.finite_of_finrank_eq_succ hdim
+    have h := Module.Dual.finrank_ker_inf_add_one (f := (dg : E →ₗ[𝕜] 𝕜)) (U := T)
+      fun h ↦ hgv (h hvs)
+    rw [inf_comm] at h
+    omega
   -- The parametrization `ι z = q'⁻¹ (q' y + z)` of the cut is read in `e` through the transition
   -- `e ∘ q'⁻¹`, whose derivative `D` at `q' y` satisfies `D ∘ A' = Ae`.
   set D := fderiv 𝕜 (q'.symm.trans e) (q' y)

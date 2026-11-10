@@ -9,7 +9,6 @@ public import Mathlib.LinearAlgebra.Dimension.LinearMap
 public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.LinearAlgebra.Dimension.Constructions
 import TauCeti.Algebra.Module.Equiv.Basic
-import TauCeti.LinearAlgebra.Dual.Lemmas
 
 /-!
 # Dimensions of submodules
@@ -168,18 +167,6 @@ theorem disjoint_inf_ker_ker_of_finrank_eq_succ {G : Type*} [AddCommGroup G] [Mo
   obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hwv
   have hc : c * dg v = 0 := by simpa using hwK
   rw [(mul_eq_zero.1 hc).resolve_right hgv, zero_smul]
-
-/-- The linear-algebra core of the transverse level disc, dimension part. If `T` has dimension
-`dim G + 1` and contains a vector `v` with `dg v ≠ 0` for a linear form `dg`, then `T ⊓ ker dg`
-has the dimension of `G`. -/
-theorem finrank_inf_ker_eq_of_finrank_eq_succ {G : Type*} [AddCommGroup G] [Module 𝕜 G]
-    {T : Submodule 𝕜 E} {dg : E →ₗ[𝕜] 𝕜} {v : E}
-    (hdim : Module.finrank 𝕜 T = Module.finrank 𝕜 G + 1) (hvs : v ∈ T) (hgv : dg v ≠ 0) :
-    Module.finrank 𝕜 ↥(T ⊓ LinearMap.ker dg) = Module.finrank 𝕜 G := by
-  have : FiniteDimensional 𝕜 T := Module.finite_of_finrank_eq_succ hdim
-  have h := Module.Dual.finrank_ker_inf_add_one (f := dg) (U := T) fun h ↦ hgv (h hvs)
-  rw [inf_comm] at h
-  omega
 
 end DivisionRing
 
