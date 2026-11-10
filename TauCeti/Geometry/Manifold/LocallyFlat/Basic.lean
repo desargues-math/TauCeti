@@ -358,33 +358,41 @@ variable {𝕜 : Type*} [Ring 𝕜] [AddCommGroup F] [Module 𝕜 F] [IsTopologi
   {L : Submodule 𝕜 F}
 
 /-- The parametrization `z ↦ φ.symm (φ x + z)` of a set `A` flattened by the chart `φ` onto a
-linear subspace `L` is continuous at `0`, sends `0` to `x`, takes values in `A` near `0`, and
-reaches every point of `A` near `x` from arbitrarily small parameters. -/
-theorem parametrization_properties {φ : OpenPartialHomeomorph M F} {A : Set M} {x : M}
+linear subspace `L` is continuous at `0`. -/
+theorem continuousAt_symm_add {φ : OpenPartialHomeomorph M F} {x : M} (hxφ : x ∈ φ.source) :
+    ContinuousAt (fun z : L ↦ φ.symm (φ x + (z : F))) 0 := by
+  have hcont : Continuous fun z : L ↦ φ x + (z : F) := continuous_const.add continuous_subtype_val
+  refine ContinuousAt.comp (f := fun z : L ↦ φ x + (z : F)) ?_ hcont.continuousAt
+  simpa using φ.continuousAt_symm (φ.map_source hxφ)
+
+/-- The parametrization `z ↦ φ.symm (φ x + z)` of a set `A` flattened by the chart `φ` onto a
+linear subspace `L` takes values in `A` for small parameters, for `x ∈ A`. -/
+theorem eventually_symm_add_mem {φ : OpenPartialHomeomorph M F} {A : Set M} {x : M}
     (hφ : IsSliceChart φ (L : Set F) A) (hxφ : x ∈ φ.source) (hxA : x ∈ A) :
-    φ.symm (φ x + ((0 : L) : F)) = x ∧
-      ContinuousAt (fun z : L ↦ φ.symm (φ x + (z : F))) 0 ∧
-      (∀ᶠ z : L in 𝓝 0, φ.symm (φ x + (z : F)) ∈ A) ∧
-      ∀ V ∈ 𝓝 (0 : L), ∀ᶠ w in 𝓝 x, w ∈ A → ∃ z ∈ V, φ.symm (φ x + (z : F)) = w := by
+    ∀ᶠ z : L in 𝓝 0, φ.symm (φ x + (z : F)) ∈ A := by
   have hxL : φ x ∈ L := (isSliceChart_iff.1 hφ x hxφ).1 hxA
   have hcont : Continuous fun z : L ↦ φ x + (z : F) := continuous_const.add continuous_subtype_val
-  refine ⟨by simp [φ.left_inv hxφ], ?_, ?_, ?_⟩
-  · refine ContinuousAt.comp (f := fun z : L ↦ φ x + (z : F)) ?_ hcont.continuousAt
-    simpa using φ.continuousAt_symm (φ.map_source hxφ)
-  · have hxt : φ.target ∈ 𝓝 (φ x + ((0 : L) : F)) := by
-      simpa using φ.open_target.mem_nhds (φ.map_source hxφ)
-    filter_upwards [hcont.continuousAt.preimage_mem_nhds hxt] with z hz
-    exact (isSliceChart_iff.1 hφ _ (φ.map_target hz)).2
-      (by rw [φ.right_inv hz]; exact L.add_mem hxL z.2)
-  · intro V hV
-    obtain ⟨V', hV', hV'V⟩ := (mem_nhds_subtype _ _ _).1 hV
-    have hlim : Tendsto (fun w ↦ φ w - φ x) (𝓝 x) (𝓝 0) := by
-      have h := ((φ.continuousAt hxφ).tendsto).sub_const (φ x)
-      rwa [sub_self] at h
-    filter_upwards [hlim (by simpa using hV'), φ.open_source.mem_nhds hxφ] with w hwV hwφ hwA
-    have hwL : φ w ∈ L := (isSliceChart_iff.1 hφ w hwφ).1 hwA
-    refine ⟨⟨φ w - φ x, L.sub_mem hwL hxL⟩, hV'V hwV, ?_⟩
-    simp [φ.left_inv hwφ]
+  have hxt : φ.target ∈ 𝓝 (φ x + ((0 : L) : F)) := by
+    simpa using φ.open_target.mem_nhds (φ.map_source hxφ)
+  filter_upwards [hcont.continuousAt.preimage_mem_nhds hxt] with z hz
+  exact (isSliceChart_iff.1 hφ _ (φ.map_target hz)).2
+    (by rw [φ.right_inv hz]; exact L.add_mem hxL z.2)
+
+/-- The parametrization `z ↦ φ.symm (φ x + z)` of a set `A` flattened by the chart `φ` onto a
+linear subspace `L` reaches every point of `A` near `x` from arbitrarily small parameters. -/
+theorem eventually_exists_symm_add_eq {φ : OpenPartialHomeomorph M F} {A : Set M} {x : M}
+    (hφ : IsSliceChart φ (L : Set F) A) (hxφ : x ∈ φ.source) (hxA : x ∈ A) :
+    ∀ V ∈ 𝓝 (0 : L), ∀ᶠ w in 𝓝 x, w ∈ A → ∃ z ∈ V, φ.symm (φ x + (z : F)) = w := by
+  have hxL : φ x ∈ L := (isSliceChart_iff.1 hφ x hxφ).1 hxA
+  intro V hV
+  obtain ⟨V', hV', hV'V⟩ := (mem_nhds_subtype _ _ _).1 hV
+  have hlim : Tendsto (fun w ↦ φ w - φ x) (𝓝 x) (𝓝 0) := by
+    have h := ((φ.continuousAt hxφ).tendsto).sub_const (φ x)
+    rwa [sub_self] at h
+  filter_upwards [hlim (by simpa using hV'), φ.open_source.mem_nhds hxφ] with w hwV hwφ hwA
+  have hwL : φ w ∈ L := (isSliceChart_iff.1 hφ w hwφ).1 hwA
+  refine ⟨⟨φ w - φ x, L.sub_mem hwL hxL⟩, hV'V hwV, ?_⟩
+  simp [φ.left_inv hwφ]
 
 end Parametrization
 

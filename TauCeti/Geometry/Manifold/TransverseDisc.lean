@@ -135,23 +135,29 @@ theorem exists_param_inter_preimage_of_span_mtangentConeAt_sup_eq_top [FiniteDim
   set π : E →ₗ[𝕜] G := ((P ∘L (Ae : E →L[𝕜] E) : E →L[𝕜] G) : E →ₗ[𝕜] G)
   have hT'π : Submodule.span 𝕜 (mtangentConeAt 𝓘(𝕜, E) s' y) ≤ LinearMap.ker π :=
     Submodule.span_le.2 fun u hu ↦ map_mtangentConeAt_eq_zero hAe hye hys' hs'P hu
-  obtain ⟨hπinj, hdimF⟩ := Submodule.injOn_inf_ker_and_finrank_inf_ker_eq (π := π) (dg := dg)
+  have hπdisj := Submodule.disjoint_inf_ker_ker_of_finrank_eq_succ (π := π) (dg := dg)
     (v := v) (hP.comp Ae.surjective) (top_unique (htr ▸ sup_le_sup_left hT'π T)) hdim hvs
     (hT'π hvs') hgv
+  have hdimF := Submodule.finrank_inf_ker_eq_of_finrank_eq_succ (G := G) (dg := dg) (v := v) hdim
+    hvs hgv
   -- The parametrization `ι z = q'⁻¹ (q' y + z)` of the cut is read in `e` through the transition
   -- `e ∘ q'⁻¹`, whose derivative `D` at `q' y` satisfies `D ∘ A' = Ae`.
   set D := fderiv 𝕜 (q'.symm.trans e) (q' y)
   have hDA : D ∘L (A' : E →L[𝕜] E) = Ae := fderiv_symm_trans_comp_eq hn hq' he hyq' hye hA' hAe
   have hDF (z : E) : D z = Ae (A'.symm z) := by
     simpa using congrArg (fun B : E →L[𝕜] E ↦ B (A'.symm z)) hDA
-  obtain ⟨hι0, hcont, hmem, hreach⟩ := hs₀.parametrization_properties hyq' ⟨hys, rfl⟩
+  have hι0 : q'.symm (q' y + ((0 : F) : E)) = y := by simp [q'.left_inv hyq']
+  have hcont := IsSliceChart.continuousAt_symm_add (L := F) (φ := q') hyq'
+  have hmem := hs₀.eventually_symm_add_mem hyq' ⟨hys, rfl⟩
+  have hreach := hs₀.eventually_exists_symm_add_eq hyq' ⟨hys, rfl⟩
   refine ⟨F, fun z ↦ q'.symm (q' y + z), D ∘L F.subtypeL, hι0, hcont, hmem,
     hasStrictFDerivAt_comp_symm_add_subtypeL hn hq' he hyq' hye F, ?_,
     fun V hV ↦ (hreach V hV).mono fun w hw hws hwg ↦ hw ⟨hws, hwg⟩⟩
   · refine ContinuousLinearMap.isInvertible_of_injective_of_finrank_eq
       (P ∘L D ∘L F.subtypeL) hdimF ?_
     refine (injective_iff_map_eq_zero (P ∘L D ∘L F.subtypeL)).2 fun z hz ↦ Subtype.ext ?_
-    have h0 := hπinj _ (hA'F z z.2) (by simpa [π, hDF] using hz)
+    have h0 := Submodule.disjoint_def.1 hπdisj _ (hA'F z z.2)
+      (LinearMap.mem_ker.2 (by simpa [π, hDF] using hz))
     simpa using h0
 
 end TauCeti

@@ -160,6 +160,8 @@ theorem isInvertible_mfderiv_of_isIsotropic [FiniteDimensional ℝ E] [FiniteDim
   have : FiniteDimensional ℝ (TangentSpace J (b x)) := inferInstanceAs (FiniteDimensional ℝ F)
   have hdim : finrank ℝ (TangentSpace K x) = finrank ℝ (TangentSpace J (b x)) :=
     ea.toLinearEquiv.finrank_eq.trans hEF
+  -- `TangentSpace K x` is definitionally the model space `EL` (and `TangentSpace J (b x)` is `F`),
+  -- so the helper is applied at the model spaces, where `FiniteDimensional ℝ EL` is needed.
   have : FiniteDimensional ℝ EL := inferInstanceAs (FiniteDimensional ℝ (TangentSpace K x))
   exact ContinuousLinearMap.isInvertible_of_injective_of_finrank_eq (U := EL) (G := F)
     (mfderiv K J b x) hdim hinj

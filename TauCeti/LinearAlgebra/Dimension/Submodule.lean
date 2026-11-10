@@ -138,17 +138,16 @@ theorem isCompl_of_codisjoint_of_finrank_le {V S : Submodule 𝕜 E} [FiniteDime
   have : φ ⟨x, hxS⟩ = φ 0 := by simpa [φ] using hxV
   simpa using congrArg Subtype.val (hinj this)
 
-/-- The linear-algebra core of the transverse level disc. If `T` has dimension `dim G + 1`, `T` and
-the kernel of a surjection `π` span the space, and some `v ∈ T` with `dg v ≠ 0` for a linear form
-`dg` lies in the kernel of `π`, then `π` is injective on `T ⊓ ker dg`, which has the dimension
-of `G`. -/
-theorem injOn_inf_ker_and_finrank_inf_ker_eq {G : Type*} [AddCommGroup G] [Module 𝕜 G]
+/-- The linear-algebra core of the transverse level disc, kernel part. If `T` has dimension
+`dim G + 1`, `T` and the kernel of a surjection `π` span the space, and some `v ∈ T` with
+`dg v ≠ 0` for a linear form `dg` lies in the kernel of `π`, then `T ⊓ ker dg` meets `ker π`
+trivially, that is, `π` is injective on `T ⊓ ker dg`. -/
+theorem disjoint_inf_ker_ker_of_finrank_eq_succ {G : Type*} [AddCommGroup G] [Module 𝕜 G]
     {T : Submodule 𝕜 E} {π : E →ₗ[𝕜] G} {dg : E →ₗ[𝕜] 𝕜} {v : E}
     (hπs : Function.Surjective π) (hTπ : T ⊔ LinearMap.ker π = ⊤)
     (hdim : Module.finrank 𝕜 T = Module.finrank 𝕜 G + 1) (hvs : v ∈ T) (hvπ : π v = 0)
     (hgv : dg v ≠ 0) :
-    (∀ w ∈ T ⊓ LinearMap.ker dg, π w = 0 → w = 0) ∧
-      Module.finrank 𝕜 ↥(T ⊓ LinearMap.ker dg) = Module.finrank 𝕜 G := by
+    Disjoint (T ⊓ LinearMap.ker dg) (LinearMap.ker π) := by
   have : FiniteDimensional 𝕜 T := Module.finite_of_finrank_eq_succ hdim
   have hv0 : v ≠ 0 := by rintro rfl; exact hgv (map_zero _)
   have hsurj : Function.Surjective (π.domRestrict T) :=
@@ -163,16 +162,24 @@ theorem injOn_inf_ker_and_finrank_inf_ker_eq {G : Type*} [AddCommGroup G] [Modul
     (Submodule.eq_of_le_of_finrank_eq
       ((Submodule.span_singleton_le_iff_mem v _).2 (Submodule.mem_inf.2 ⟨hvs, hvπ⟩))
       (by rw [finrank_span_singleton hv0]; omega)).symm
-  refine ⟨?_, ?_⟩
-  · rintro w ⟨hwT, hwK⟩ hw
-    have hwv : w ∈ T ⊓ LinearMap.ker π := Submodule.mem_inf.2 ⟨hwT, hw⟩
-    rw [hline] at hwv
-    obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hwv
-    have hc : c * dg v = 0 := by simpa using hwK
-    rw [(mul_eq_zero.1 hc).resolve_right hgv, zero_smul]
-  · have h := Module.Dual.finrank_ker_inf_add_one (f := dg) (U := T) fun h ↦ hgv (h hvs)
-    rw [inf_comm] at h
-    omega
+  refine Submodule.disjoint_def.2 fun w ⟨hwT, hwK⟩ hw ↦ ?_
+  have hwv : w ∈ T ⊓ LinearMap.ker π := Submodule.mem_inf.2 ⟨hwT, hw⟩
+  rw [hline] at hwv
+  obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hwv
+  have hc : c * dg v = 0 := by simpa using hwK
+  rw [(mul_eq_zero.1 hc).resolve_right hgv, zero_smul]
+
+/-- The linear-algebra core of the transverse level disc, dimension part. If `T` has dimension
+`dim G + 1` and contains a vector `v` with `dg v ≠ 0` for a linear form `dg`, then `T ⊓ ker dg`
+has the dimension of `G`. -/
+theorem finrank_inf_ker_eq_of_finrank_eq_succ {G : Type*} [AddCommGroup G] [Module 𝕜 G]
+    {T : Submodule 𝕜 E} {dg : E →ₗ[𝕜] 𝕜} {v : E}
+    (hdim : Module.finrank 𝕜 T = Module.finrank 𝕜 G + 1) (hvs : v ∈ T) (hgv : dg v ≠ 0) :
+    Module.finrank 𝕜 ↥(T ⊓ LinearMap.ker dg) = Module.finrank 𝕜 G := by
+  have : FiniteDimensional 𝕜 T := Module.finite_of_finrank_eq_succ hdim
+  have h := Module.Dual.finrank_ker_inf_add_one (f := dg) (U := T) fun h ↦ hgv (h hvs)
+  rw [inf_comm] at h
+  omega
 
 end DivisionRing
 
