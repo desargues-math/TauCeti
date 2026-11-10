@@ -223,15 +223,15 @@ theorem iUnion_unstableSet (hf : IsMorse 𝓘(ℝ, E) f) :
   obtain ⟨x, hx, htend⟩ := hX.exists_tendsto_atBot hf y
   exact mem_iUnion₂.2 ⟨x, hx, Flow.mem_unstableSet.2 htend⟩
 
-/-- **The stable set of a strict maximum is a point.** If `f` is differentiable and has a strict
-global maximum at `a`, then no other orbit of the flow converges to `a` in forward time. -/
+/-- **The stable set of a strict maximum is a point.** If `f` has a strict global maximum at `a`,
+then no other orbit of the flow converges to `a` in forward time. -/
 theorem stableSet_eq_singleton_of_lt {a : M}
     (hmax : ∀ y, y ≠ a → f y < f a) : hX.flow.stableSet a = {a} :=
   Flow.stableSet_eq_singleton_of_antitone hX.mdifferentiable.continuous.continuousAt
     hX.antitone_flow hmax
 
-/-- **The unstable set of a strict minimum is a point.** If `f` is differentiable and has a strict
-global minimum at `a`, then no other orbit of the flow converges to `a` in backward time. -/
+/-- **The unstable set of a strict minimum is a point.** If `f` has a strict global minimum at `a`,
+then no other orbit of the flow converges to `a` in backward time. -/
 theorem unstableSet_eq_singleton_of_lt {a : M}
     (hmin : ∀ y, y ≠ a → f a < f y) : hX.flow.unstableSet a = {a} :=
   Flow.unstableSet_eq_singleton_of_antitone hX.mdifferentiable.continuous.continuousAt

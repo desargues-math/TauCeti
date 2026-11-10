@@ -28,8 +28,8 @@ finite-dimensional real normed space `E`. A vector field `X` on `M` is a
   coordinates `z = L (ψ y)`, then `X` reads `z ↦ (-wᵢ zᵢ)ᵢ`.
 
 Smoothness of `f` is not part of the definition: the Morse chart condition already forces `f` to be
-a nondegenerate quadratic form near each critical point, and the results below that need `f` to be
-differentiable assume it separately.
+a nondegenerate quadratic form near each critical point, and differentiability of `f` follows from
+the definition (`TauCeti.IsAdaptedPseudoGradient.mdifferentiable` in `Existence.lean`).
 
 This is the class of vector fields with which Audin and Damian build Morse homology. Near a
 critical point the flow of an adapted pseudo-gradient is linear in the Morse chart, so its local

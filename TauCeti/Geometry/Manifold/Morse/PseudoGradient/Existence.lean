@@ -49,6 +49,8 @@ union with the interiors of the critical-point neighbourhoods is the returned ne
   compact set whose critical points are nondegenerate, and its Morse-function specialization
   `TauCeti.IsMorse.exists_contMDiff_pseudoGradientOn_nhds`.
 * `TauCeti.IsMorse.exists_isAdaptedPseudoGradient`: existence of adapted pseudo-gradients.
+* `TauCeti.IsAdaptedPseudoGradient.mdifferentiable`: differentiability of `f` follows from the
+  Morse-chart condition of an adapted pseudo-gradient.
 
 The chart calculus used here is general and lives in
 `TauCeti/Geometry/Manifold/MFDeriv/ModelChart.lean` and
