@@ -191,6 +191,5 @@ theorem ae_tendsto_renewalCountNat_div_of_expMeasure [IsProbabilityMeasure P]
     simpa only [ENNReal.ofReal_coe_nnreal] using h.symm
   simpa only [ENNReal.toReal_inv, hmean, inv_inv] using
     ae_tendsto_renewalCountNat_div hindep (identDistrib_of_hasLaw_expMeasure hlaw)
-      (measure_eq_zero_lt_one_of_hasLaw_expMeasure (hlaw 0))
 
 end TauCeti.Probability
