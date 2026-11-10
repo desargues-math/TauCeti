@@ -63,11 +63,11 @@ theorem summable_norm_coeff_localLogDerivSeries_of_zeroFree (D : EulerProductDat
       ‖PowerSeries.coeff e (D.localLogDerivSeries P) *
         ((Ideal.absNorm P.asIdeal : ℂ) ^ (-s)) ^ e‖ := by
   -- The canonical local-factor radius bound supplies the analytic disk.
-  obtain ⟨hr, hz⟩ := D.localPowerSeries_radius_data P
+  obtain ⟨-, hz⟩ := D.localPowerSeries_radius_data P
     (LSeriesSummable_of_abscissaOfAbsConv_lt_re (s := (σ : ℂ)) (by simpa using hσ)) hs
   -- Zero-freeness lets the analytic logarithmic derivative inherit that radius.
   have hlog := PowerSeries.summable_norm_coeff_logDeriv_mul_pow_of_zeroFree
-    (D.localPowerSeries P) (D.constantCoeff_localPowerSeries P) hr
+    (D.localPowerSeries P) (D.constantCoeff_localPowerSeries P)
     (fun z hz' ↦ hne z (by
       rw [enorm_eq_nnnorm, ENNReal.coe_lt_coe] at hz'
       exact_mod_cast hz')) hz

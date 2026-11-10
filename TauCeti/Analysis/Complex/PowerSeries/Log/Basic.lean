@@ -40,13 +40,12 @@ open scoped Topology
 original power series converges. -/
 theorem summable_norm_coeff_logOf_mul_pow_of_zeroFree (f : ℂ⟦X⟧)
     (hf0 : constantCoeff f = 1) {r : ENNReal}
-    (hr : r ≤ (FormalMultilinearSeries.ofScalars ℂ fun n ↦ coeff n f).radius)
     (hne : ∀ z : ℂ, ‖z‖ₑ < r →
       FormalMultilinearSeries.ofScalarsSum (E := ℂ) (fun n ↦ coeff n f) z ≠ 0)
     {z : ℂ} (hz : ‖z‖ₑ < r) :
     Summable fun n : ℕ ↦ ‖coeff n (logOf f) * z ^ n‖ := by
   rw [← summable_nat_add_iff 1]
-  refine (summable_norm_coeff_logDeriv_mul_pow_of_zeroFree f hf0 hr hne hz).mul_left ‖z‖
+  refine (summable_norm_coeff_logDeriv_mul_pow_of_zeroFree f hf0 hne hz).mul_left ‖z‖
     |>.of_nonneg_of_le (fun _ ↦ norm_nonneg _) fun n ↦ ?_
   have hcast : (n : ℂ) + 1 = ((n + 1 : ℕ) : ℂ) := by norm_num
   have hn : (1 : ℝ) ≤ ‖(n : ℂ) + 1‖ := by
@@ -215,27 +214,25 @@ convergence is at least the radius of any disk inside the disk of convergence of
 analytic sum of `f` has no zero. -/
 theorem le_radius_ofScalars_logOf_of_zeroFree (f : ℂ⟦X⟧)
     (hf0 : constantCoeff f = 1) {r : ENNReal}
-    (hr : r ≤ (FormalMultilinearSeries.ofScalars ℂ fun n ↦ coeff n f).radius)
     (hne : ∀ z : ℂ, ‖z‖ₑ < r →
       FormalMultilinearSeries.ofScalarsSum (E := ℂ) (fun n ↦ coeff n f) z ≠ 0) :
     r ≤ (FormalMultilinearSeries.ofScalars ℂ fun n ↦ coeff n (logOf f)).radius := by
   refine ENNReal.le_of_forall_nnreal_lt fun t ht ↦ ?_
   apply FormalMultilinearSeries.le_radius_of_summable
-  have h := summable_norm_coeff_logOf_mul_pow_of_zeroFree f hf0 hr hne
+  have h := summable_norm_coeff_logOf_mul_pow_of_zeroFree f hf0 hne
     (z := ((t : ℝ) : ℂ)) (by simpa [enorm_eq_nnnorm] using ht)
   simpa [FormalMultilinearSeries.ofScalars_norm] using h
 
 /-- The evaluated formal logarithm is holomorphic on every zero-free disk of convergence. -/
 theorem differentiableOn_tsum_coeff_logOf_mul_pow_of_zeroFree (f : ℂ⟦X⟧)
     (hf0 : constantCoeff f = 1) {r : ENNReal}
-    (hr : r ≤ (FormalMultilinearSeries.ofScalars ℂ fun n ↦ coeff n f).radius)
     (hne : ∀ z : ℂ, ‖z‖ₑ < r →
       FormalMultilinearSeries.ofScalarsSum (E := ℂ) (fun n ↦ coeff n f) z ≠ 0) :
     DifferentiableOn ℂ (fun z : ℂ ↦ ∑' n : ℕ, coeff n (logOf f) * z ^ n)
       (Metric.eball 0 r) := by
   rcases eq_zero_or_pos r with rfl | hr0
   · exact fun z hz ↦ absurd hz (by simp)
-  have hlog := le_radius_ofScalars_logOf_of_zeroFree f hf0 hr hne
+  have hlog := le_radius_ofScalars_logOf_of_zeroFree f hf0 hne
   refine ((((FormalMultilinearSeries.ofScalars ℂ fun n ↦ coeff n (logOf f)).hasFPowerSeriesOnBall
     (hr0.trans_le hlog)).differentiableOn).mono (Metric.eball_subset_eball hlog)).congr
     fun z _ ↦ ?_
@@ -264,7 +261,7 @@ theorem hasSum_coeff_logOf_mul_pow_of_slitPlane (f : ℂ⟦X⟧)
     (((FormalMultilinearSeries.ofScalars ℂ fun n ↦ coeff n f).hasFPowerSeriesOnBall
       (hr0.trans_le hr)).differentiableOn).mono (Metric.eball_subset_eball hr)
   have hΛd : DifferentiableOn ℂ Λ U :=
-    differentiableOn_tsum_coeff_logOf_mul_pow_of_zeroFree f hf0 hr hne
+    differentiableOn_tsum_coeff_logOf_mul_pow_of_zeroFree f hf0 hne
   have hLd : DifferentiableOn ℂ (fun w ↦ Complex.log (F w)) U := fun w hw ↦
     ((hFd w hw).differentiableAt (Metric.isOpen_eball.mem_nhds hw)).clog
       (hslit w (hmem hw)) |>.differentiableWithinAt
@@ -284,7 +281,7 @@ theorem hasSum_coeff_logOf_mul_pow_of_slitPlane (f : ℂ⟦X⟧)
     simpa [constantCoeff] using constantCoeff_logOf hf0
   have heq := Metric.isOpen_eball.eqOn_of_deriv_eq (convex_eball (0 : ℂ) r).isPreconnected
     hΛd hLd hderiv (Metric.mem_eball_self hr0) h0
-  have hsum := (summable_norm_coeff_logOf_mul_pow_of_zeroFree f hf0 hr hne hz).of_norm.hasSum
+  have hsum := (summable_norm_coeff_logOf_mul_pow_of_zeroFree f hf0 hne hz).of_norm.hasSum
   have hz' : ∑' n : ℕ, coeff n (logOf f) * z ^ n = Complex.log (F z) :=
     heq (by simpa only [U, Metric.mem_eball, edist_zero_right] using hz)
   rwa [hz'] at hsum

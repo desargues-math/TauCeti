@@ -55,15 +55,13 @@ theorem summable_norm_coeff_localLogSeries_of_zeroFree (D : EulerProductData K)
     (hs : σ < s.re) :
     Summable fun e : ℕ ↦ ‖PowerSeries.coeff e (D.localLogSeries P) *
       ((Ideal.absNorm P.asIdeal : ℂ) ^ (-s)) ^ e‖ := by
-  obtain ⟨hr, hz⟩ := D.localPowerSeries_radius_data P hσ hs
+  obtain ⟨-, hz⟩ := D.localPowerSeries_radius_data P hσ hs
   rw [D.localLogSeries_def]
-  apply PowerSeries.summable_norm_coeff_logOf_mul_pow_of_zeroFree
-    (D.localPowerSeries P) (D.constantCoeff_localPowerSeries P) hr
-  · intro z hz'
-    apply hne z
-    rw [enorm_eq_nnnorm, ENNReal.coe_lt_coe] at hz'
-    exact_mod_cast hz'
-  · exact hz
+  refine PowerSeries.summable_norm_coeff_logOf_mul_pow_of_zeroFree
+    (D.localPowerSeries P) (D.constantCoeff_localPowerSeries P) (fun z hz' ↦ ?_) hz
+  apply hne z
+  rw [enorm_eq_nnnorm, ENNReal.coe_lt_coe] at hz'
+  exact_mod_cast hz'
 
 /-- **The local prime-power logarithm evaluates to a logarithm of the Euler factor.** Under the
 same convergence and zero-free-disk hypotheses, exponentiating the sum of the formal logarithmic
