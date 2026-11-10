@@ -9,7 +9,6 @@ public import Mathlib.Geometry.Manifold.IntegralCurve.Basic
 public import TauCeti.Geometry.Manifold.Morse.Lemma
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Geometry.Manifold.VectorBundle.ContMDiffSection
-import TauCeti.Geometry.Manifold.IntegralCurve.Monotone
 import TauCeti.Geometry.Manifold.MFDeriv.Curve
 import TauCeti.Geometry.Manifold.MFDeriv.ModelChart
 import TauCeti.Geometry.Manifold.MFDeriv.NormedSpace
