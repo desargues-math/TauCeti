@@ -74,12 +74,17 @@ namespace LinearMap
 variable {R F : Type*} [CommRing R] [AddCommGroup F] [Module R F]
   [Module.Free R F] [Module.Finite R F]
 
-/-- The maximal minors of the image of an endomorphism of a finite free module generate
-the principal ideal of its determinant. -/
+omit [Module.Finite R F] in
+/-- The maximal minors of the image of an endomorphism of a free module generate
+the principal ideal of its determinant. If the module is not finite, both sides are `⊤`. -/
 @[simp]
 theorem minorsIdeal_range_finrank_eq_span_det (φ : F →ₗ[R] F) :
     (LinearMap.range φ).minorsIdeal (Module.finrank R F) = Ideal.span {φ.det} := by
   nontriviality R
+  by_cases hF : Module.Finite R F
+  swap
+  · rw [Module.finrank_of_not_finite hF, minorsIdeal_zero, det_eq_one_of_not_module_finite hF,
+      Ideal.span_singleton_one]
   let b := Module.finBasis R F
   rw [Submodule.minorsIdeal_eq_span_det b]
   refine le_antisymm (Ideal.span_le.2 ?_) (Ideal.span_le.2 ?_)
