@@ -7,6 +7,7 @@ module
 
 public import TauCeti.Geometry.Manifold.LocalDiffeomorph.Basic
 public import TauCeti.Geometry.Symplectic.Lagrangian.Graph
+import TauCeti.Analysis.Normed.Operator.FiniteDimensional
 import all Mathlib.Geometry.Manifold.LocalDiffeomorph
 
 /-!
@@ -159,7 +160,9 @@ theorem isInvertible_mfderiv_of_isIsotropic [FiniteDimensional ℝ E] [FiniteDim
   have : FiniteDimensional ℝ (TangentSpace J (b x)) := inferInstanceAs (FiniteDimensional ℝ F)
   have hdim : finrank ℝ (TangentSpace K x) = finrank ℝ (TangentSpace J (b x)) :=
     ea.toLinearEquiv.finrank_eq.trans hEF
-  exact ⟨(LinearMap.linearEquivOfInjective _ hinj hdim).toContinuousLinearEquiv, rfl⟩
+  have : FiniteDimensional ℝ EL := inferInstanceAs (FiniteDimensional ℝ (TangentSpace K x))
+  exact ContinuousLinearMap.isInvertible_of_injective_of_finrank_eq (U := EL) (G := F)
+    (mfderiv K J b x) hdim hinj
 
 /-- **Isotropic relations project to local diffeomorphisms together.** In equal finite
 dimensions, if the tangent image of `y ↦ (a y, b y)` at an interior point `x` is isotropic for the
