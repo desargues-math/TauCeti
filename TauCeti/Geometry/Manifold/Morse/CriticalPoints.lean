@@ -917,6 +917,7 @@ section FiniteDimensional
 
 variable [FiniteDimensional ℝ E]
 
+omit [FiniteDimensional ℝ E] in
 /-- There are no critical points of index larger than the dimension. -/
 theorem criticalCount_eq_zero_of_finrank_lt {j : ℕ} (hj : Module.finrank ℝ E < j) :
     criticalCount I f j = 0 := by
@@ -924,6 +925,7 @@ theorem criticalCount_eq_zero_of_finrank_lt {j : ℕ} (hj : Module.finrank ℝ E
   rintro x ⟨-, rfl⟩
   exact (manifoldMorseIndex_le_finrank.trans_lt hj).false
 
+omit [FiniteDimensional ℝ E] in
 /-- The numbers of critical points of the indices `0, …, dim M` add up to the number of critical
 points. -/
 theorem sum_criticalCount_eq_totalCriticalCount :
@@ -941,6 +943,7 @@ theorem sum_criticalCount_eq_totalCriticalCount :
     ← Fin.sum_univ_eq_sum_range]
   rfl
 
+omit [FiniteDimensional ℝ E] in
 /-- The signed count `∑ᵢ (-1)ⁱ cᵢ` of the critical points of `f`, by index, is the sum of `(-1)^λ`
 over the critical points, `λ` being the Morse index, when the critical set is a finite set `s`.
 Here `n` is any bound for the dimension of `M`. -/
@@ -958,6 +961,7 @@ theorem sum_range_neg_one_pow_mul_toNat_criticalCount_eq_sum (s : Finset M)
   rw [criticalCount_def, hi, encard_coe_eq_coe_finsetCard]
   simp [mul_comm]
 
+omit [FiniteDimensional ℝ E] in
 /-- Terms of index above the dimension of `M` do not contribute to a signed count
 `∑ᵢ (-1)ⁱ cᵢ` of critical points, so it may be truncated at `dim M`. -/
 theorem sum_range_neg_one_pow_mul_toNat_criticalCount_of_finrank_le {n : ℕ}
@@ -967,6 +971,7 @@ theorem sum_range_neg_one_pow_mul_toNat_criticalCount_of_finrank_le {n : ℕ}
   refine (Finset.sum_subset (Finset.range_subset_range.2 (by omega)) fun i hi hi' ↦ ?_).symm
   rw [criticalCount_eq_zero_of_finrank_lt (by simp_all), ENat.toNat_zero, Nat.cast_zero, mul_zero]
 
+omit [FiniteDimensional ℝ E] in
 /-- **Parity of the critical count.** If `f` has finitely many critical points, their number is
 congruent modulo `2` to the signed count `∑ᵢ (-1)ⁱ cᵢ`, for any bound `n` of the dimension of
 `M`. -/
